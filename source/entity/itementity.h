@@ -31,4 +31,7 @@ public:
   bool isBlockableBy(Mob &mob) override;
   void render(Screen &screen) override;
   void take(Player &player);
+
+  void serialize(Serializer &serializer) override;
+  void deserialize(Serializer &serializer) override;
 };

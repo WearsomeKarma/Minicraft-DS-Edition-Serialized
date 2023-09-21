@@ -1,10 +1,9 @@
 #include "textparticle.h"
 
 TextParticle::TextParticle(std::string msg, int x, int y, int col)
+: Particle(PK_TEXT, x, y, time, 60)
 {
   this->msg = msg;
-  this->x = x;
-  this->y = y;
   this->col = col;
   xx = x;
   yy = y;
@@ -16,11 +15,7 @@ TextParticle::TextParticle(std::string msg, int x, int y, int col)
 
 void TextParticle::tick(Game &game, Level &level, std::shared_ptr<Entity> self)
 {
-  time++;
-  if (time > 60)
-  {
-    remove();
-  }
+  Particle::tick(game, level, self);
   xx += xa;
   yy += ya;
   zz += za;

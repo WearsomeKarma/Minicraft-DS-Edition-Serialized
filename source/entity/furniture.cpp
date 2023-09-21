@@ -78,3 +78,28 @@ std::shared_ptr<Furniture> Furniture::clone()
 
   return furniture;
 };
+
+void Furniture::serialize(Serializer &serializer)
+{
+  serializer.saveToFile(&col);
+  serializer.saveToFile(&sprite);
+
+  size_t length = name.length();
+  char char_name[length];
+
+  serializer.saveToFile(&length);
+  serializer.saveToFile_Fields(&char_name[0], &char_name[length-1]);
+}
+
+void Furniture::deserialize(Serializer &serializer)
+{
+  serializer.loadFromFile(&col);
+  serializer.loadFromFile(&sprite);
+
+  size_t length;
+  serializer.loadFromFile(&length);
+  char char_name[length];
+  serializer.saveToFile_Fields(&char_name[0], &char_name[length-1]);
+
+  name.assign(&char_name[0], length);
+}

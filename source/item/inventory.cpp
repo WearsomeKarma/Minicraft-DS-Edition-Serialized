@@ -106,3 +106,13 @@ int Inventory::count(const Item &item)
   }
   return 0;
 }
+
+void Inventory::serialize(Serializer &serializer)
+{
+  serializer.saveToFile_Vector_Shared(items);
+}
+
+void Inventory::deserialize(Serializer &serializer)
+{
+  serializer.loadFromFile_Vector_Shared(items);
+}

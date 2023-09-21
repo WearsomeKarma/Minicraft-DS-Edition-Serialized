@@ -1,6 +1,8 @@
 #pragma once
 
 #include "../shim/random.h"
+#include "../serialization/UUID.h"
+#include "../serialization/serializable.h"
 
 #include <memory>
 
@@ -13,8 +15,9 @@ class Item;
 class ItemEntity;
 class Mob;
 
-class Entity
+class Entity : public ISerializeable
 {
+  std::shared_ptr<UUID> uuid;
 protected:
   static Random random;
 
@@ -25,6 +28,8 @@ public:
   int xr = 6;
   int yr = 6;
   bool removed = false;
+
+  Entity(std::shared_ptr<UUID> uuid);
 
   bool interact(Player &player, Item &item, int attackDir);
   void remove();
@@ -42,4 +47,9 @@ public:
   virtual bool canSwim() { return false; }
   virtual bool use(Game &game, Level &level, Player &player, int attackDir) { return false; }
   virtual int getLightRadius() { return 0; }
+
+  void serialize(Serializer &serializer) override;
+  void deserialize(Serializer &serializer) override;
+  std::shared_ptr<UUID> getUUID() override 
+  { return uuid; }
 };

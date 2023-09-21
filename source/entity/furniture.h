@@ -10,6 +10,7 @@ public:
   int col, sprite;
   std::string name;
 
+  Furniture(std::shared_ptr<UUID> uuid) : Entity(uuid) {}
   Furniture(std::string name);
   Furniture(Furniture &f);
 
@@ -19,6 +20,9 @@ public:
   bool blocks(Entity &e) override;
   void take(Player &player);
   virtual std::shared_ptr<Furniture> clone();
+
+  void serialize(Serializer &serializer) override;
+  void deserialize(Serializer &serializer) override;
 
 protected:
   bool shouldTake = false;

@@ -39,7 +39,7 @@ bool FlowerTile::interact(Level &level, int x, int y, Player &player, Item &item
 {
   if (auto tool = dynamic_cast<ToolItem *>(&item))
   {
-    if (tool->type == &ToolType::shovel)
+    if (tool->type == &ToolDetails::shovel)
     {
       if (player.payStamina(4 - tool->level))
       {

@@ -3,13 +3,10 @@
 #include "../../game.h"
 #include "../../gfx/screen.h"
 #include "../../level/level.h"
-#include "../entity.h"
+#include "../particle.h"
 
-class SmashParticle : public Entity
+class SmashParticle : public Particle
 {
-private:
-  int time = 0;
-
 public:
   SmashParticle(int x, int y);
 

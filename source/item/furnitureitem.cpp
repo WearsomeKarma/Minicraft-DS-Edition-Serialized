@@ -1,7 +1,7 @@
 #include "furnitureitem.h"
 
 FurnitureItem::FurnitureItem(std::shared_ptr<Furniture> furniture)
-    : furniture(furniture) {}
+    : furniture(furniture), uuid(furniture->getUUID()) {}
 
 std::string FurnitureItem::getName() const
 {
@@ -64,4 +64,16 @@ bool FurnitureItem::matches(const Item &item)
 std::shared_ptr<Item> FurnitureItem::clone()
 {
   return std::make_shared<FurnitureItem>(furniture->clone());
+}
+
+void FurnitureItem::serialize(Serializer &serializer) 
+{
+  serializer.saveToFile(uuid.get());
+  serializer.saveToFile(&placed);
+}
+
+void FurnitureItem::deserialize(Serializer &serializer)
+{
+  serializer.loadFromFile(uuid.get());
+  serializer.loadFromFile(&placed);
 }

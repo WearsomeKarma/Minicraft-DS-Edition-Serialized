@@ -77,7 +77,7 @@ bool CloudTile::interact(Level &level, int xt, int yt, Player &player, Item &ite
 {
   if (auto tool = dynamic_cast<ToolItem *>(&item))
   {
-    if (tool->type == &ToolType::shovel)
+    if (tool->type == &ToolDetails::shovel)
     {
       if (player.payStamina(5))
       {

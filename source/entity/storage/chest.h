@@ -13,4 +13,7 @@ public:
 
   bool use(Game &game, Level &level, Player &player, int attackDir) override;
   std::shared_ptr<Furniture> clone() override;
+
+  void serialize(Serializer &serializer) override;
+  void deserialize(Serializer &serializer) override;
 };

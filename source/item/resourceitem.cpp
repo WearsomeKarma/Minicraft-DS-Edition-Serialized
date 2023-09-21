@@ -65,3 +65,15 @@ std::shared_ptr<Item> ResourceItem::clone()
 {
   return std::make_shared<ResourceItem>(resourceId);
 }
+
+void ResourceItem::serialize(Serializer &serializer)
+{
+  serializer.saveToFile(&resourceId);
+  serializer.saveToFile(&count);
+}
+
+void ResourceItem::deserialize(Serializer &serializer)
+{
+  serializer.loadFromFile(&resourceId);
+  serializer.loadFromFile(&count);
+}

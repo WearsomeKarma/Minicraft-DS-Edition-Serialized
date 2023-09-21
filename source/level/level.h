@@ -1,8 +1,14 @@
 #pragma once
 
 #include <vector>
+#include <unordered_map>
+#include <stack>
 #include <memory>
 #include "tile/tile.h"
+#include "../serialization/UUID.h"
+#include "../serialization/serializable.h"
+#include "../serialization/serializer.h"
+#include "../serialization/FactoryUUID_Stack.h"
 #include "../game.h"
 #include "../entity/player.h"
 #include "../entity/entity.h"
@@ -11,11 +17,12 @@
 class Screen;
 class LightMask;
 
-class Level
+class Level : public ISerializeable 
 {
 private:
+  FactoryUUID_Stack factoryUUID;
   Random random;
-  int depth;
+  char depth;
 
   void updateMap(int x, int y, int viewDistance);
   void sortAndRender(Screen &screen, std::vector<std::shared_ptr<Entity>> list);
@@ -38,8 +45,12 @@ public:
   std::vector<std::vector<std::shared_ptr<Entity>>> entitiesInTiles;
   std::shared_ptr<Player> player;
 
-  Level(int w, int h, int level);
-  Level(int w, int h, int level, Level &parentLevel);
+  // For Serialization - DO NOT USE.
+  Level();
+
+  // utilize these
+  Level(int w, int h, char depth);
+  Level(int w, int h, char depth, Level &parentLevel);
 
   void tick(Game &game);
   void render(Screen &screen, LightMask &LightMask, Player &player);
@@ -50,6 +61,10 @@ public:
   void add(std::shared_ptr<Entity> entity);
   void remove(std::shared_ptr<Entity> e);
   void trySpawn(int count);
+  char getDepth() { return depth; } 
 
   std::vector<std::shared_ptr<Entity>> getEntities(int x0, int y0, int x1, int y1);
+
+  void serialize(Serializer &serializer) override;
+  void deserialize(Serializer &serializer) override;
 };

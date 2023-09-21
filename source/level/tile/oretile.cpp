@@ -35,7 +35,7 @@ bool OreTile::interact(Level &level, int xt, int yt, Player &player, Item &item,
 {
   if (auto tool = dynamic_cast<ToolItem *>(&item))
   {
-    if (tool->type == &ToolType::pickaxe)
+    if (tool->type == &ToolDetails::pickaxe)
     {
       if (player.payStamina(6 - tool->level))
       {

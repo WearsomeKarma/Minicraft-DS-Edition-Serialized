@@ -1,15 +1,14 @@
 #pragma once
 
-#include "../entity.h"
+#include "../particle.h"
 #include "../../gfx/color.h"
 #include "../../gfx/screen.h"
 
-class TextParticle : public Entity
+class TextParticle : public Particle
 {
 private:
   std::string msg;
   int col;
-  int time = 0;
 
 public:
   double xa, ya, za;

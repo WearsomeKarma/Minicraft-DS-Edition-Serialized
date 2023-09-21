@@ -20,3 +20,13 @@ std::shared_ptr<Furniture> Chest::clone()
 {
   return std::make_shared<Chest>();
 }
+
+void Chest::serialize(Serializer &serializer) 
+{
+  serializer.saveToFile(inventory.get());
+}
+
+void Chest::deserialize(Serializer &serializer) 
+{
+  serializer.loadFromFile(inventory.get());
+}

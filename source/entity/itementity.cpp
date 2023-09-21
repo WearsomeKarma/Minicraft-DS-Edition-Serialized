@@ -79,3 +79,17 @@ void ItemEntity::touchedBy(Level &level, Entity &entity)
   if (time > 30)
     entity.touchItem(*this);
 }
+
+void ItemEntity::serialize(Serializer &serializer)
+{
+  serializer.saveToFile_Fields(&lifeTime, &hurtTime);
+  serializer.saveToFile_Fields(&xa, &zz);
+  //TODO: replace shared_ptr with inventory and then
+  //      work with that.
+}
+
+void ItemEntity::deserialize(Serializer &serializer)
+{
+    serializer.loadFromFile_Fields(&lifeTime, &hurtTime);
+    serializer.loadFromFile_Fields(&xa, &zz);
+}

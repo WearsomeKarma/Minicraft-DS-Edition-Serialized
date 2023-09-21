@@ -1,20 +1,30 @@
 #pragma once
 
 #include "item.h"
-#include "tooltype.h"
+#include "tooldetails.h"
 #include "../shim/random.h"
+
+enum ToolItemKind
+{
+  TIK_Shovel,
+  TIK_Hoe,
+  TIK_Sword,
+  TIK_Pickaxe,
+  TIK_Axe,
+};
 
 class ToolItem : public Item
 {
 private:
   Random random;
+  enum ToolItemKind toolItemKind;
 
 public:
   static const int MAX_LEVEL = 5;
-  ToolType *type;
+  ToolDetails *type;
   int level = 0;
 
-  ToolItem(ToolType *type, int level);
+  ToolItem(ToolDetails *type, int level);
 
   std::string getName() const override;
   int getColor() const override;
@@ -25,4 +35,8 @@ public:
   int getAttackDamageBonus(Entity &e);
   bool matches(const Item &item) override;
   std::shared_ptr<Item> clone() override;
+  enum ToolItemKind getKind() { return toolItemKind; }
+   
+  void serialize(Serializer &serializer) override;
+  void deserialize(Serializer &serializer) override;
 };

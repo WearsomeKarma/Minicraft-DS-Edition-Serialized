@@ -87,7 +87,7 @@ bool TreeTile::interact(Level &level, int xt, int yt, Player &player, Item &item
 {
   if (auto tool = dynamic_cast<ToolItem *>(&item))
   {
-    if (tool->type == &ToolType::axe)
+    if (tool->type == &ToolDetails::axe)
     {
       if (player.payStamina(4 - tool->level))
       {

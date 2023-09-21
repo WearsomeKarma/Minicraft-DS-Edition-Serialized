@@ -2,6 +2,7 @@
 
 #include <memory>
 #include "../menu/listitem.h"
+#include "../serialization/serializable.h"
 
 class Screen;
 class Tile;
@@ -10,7 +11,7 @@ class Entity;
 class Player;
 class ItemEntity;
 
-class Item : public ListItem
+class Item : public ListItem, public ISerializeable
 {
 public:
   virtual std::string getName() const { return "ERROR"; }
@@ -34,4 +35,7 @@ public:
   virtual bool matches(const Item &item) { return item.getName() == getName(); }
 
   virtual std::shared_ptr<Item> clone() { return std::make_shared<Item>(); }
+
+  void serialize(Serializer &serializer) override {}
+  void deserialize(Serializer &serializer) override {}
 };

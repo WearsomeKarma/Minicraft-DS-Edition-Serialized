@@ -17,17 +17,17 @@ static std::vector<std::shared_ptr<Recipe>> workbenchRecipes = {
     std::make_shared<Recipe>(std::make_unique<FurnitureItem>(std::make_shared<Chest>()), std::vector<ResourceItem>({ResourceItem(Resource::wood, 20)})),
     std::make_shared<Recipe>(std::make_unique<FurnitureItem>(std::make_shared<Anvil>()), std::vector<ResourceItem>({ResourceItem(Resource::ironIngot, 5)})),
 
-    std::make_shared<Recipe>(std::make_unique<ToolItem>(&ToolType::sword, 0), std::vector<ResourceItem>({ResourceItem(Resource::wood, 5)})),
-    std::make_shared<Recipe>(std::make_unique<ToolItem>(&ToolType::axe, 0), std::vector<ResourceItem>({ResourceItem(Resource::wood, 5)})),
-    std::make_shared<Recipe>(std::make_unique<ToolItem>(&ToolType::hoe, 0), std::vector<ResourceItem>({ResourceItem(Resource::wood, 5)})),
-    std::make_shared<Recipe>(std::make_unique<ToolItem>(&ToolType::pickaxe, 0), std::vector<ResourceItem>({ResourceItem(Resource::wood, 5)})),
-    std::make_shared<Recipe>(std::make_unique<ToolItem>(&ToolType::shovel, 0), std::vector<ResourceItem>({ResourceItem(Resource::wood, 5)})),
+    std::make_shared<Recipe>(std::make_unique<ToolItem>(&ToolDetails::sword, 0), std::vector<ResourceItem>({ResourceItem(Resource::wood, 5)})),
+    std::make_shared<Recipe>(std::make_unique<ToolItem>(&ToolDetails::axe, 0), std::vector<ResourceItem>({ResourceItem(Resource::wood, 5)})),
+    std::make_shared<Recipe>(std::make_unique<ToolItem>(&ToolDetails::hoe, 0), std::vector<ResourceItem>({ResourceItem(Resource::wood, 5)})),
+    std::make_shared<Recipe>(std::make_unique<ToolItem>(&ToolDetails::pickaxe, 0), std::vector<ResourceItem>({ResourceItem(Resource::wood, 5)})),
+    std::make_shared<Recipe>(std::make_unique<ToolItem>(&ToolDetails::shovel, 0), std::vector<ResourceItem>({ResourceItem(Resource::wood, 5)})),
 
-    std::make_shared<Recipe>(std::make_unique<ToolItem>(&ToolType::sword, 1), std::vector<ResourceItem>({ResourceItem(Resource::wood, 5), ResourceItem(Resource::stone, 5)})),
-    std::make_shared<Recipe>(std::make_unique<ToolItem>(&ToolType::axe, 1), std::vector<ResourceItem>({ResourceItem(Resource::wood, 5), ResourceItem(Resource::stone, 5)})),
-    std::make_shared<Recipe>(std::make_unique<ToolItem>(&ToolType::hoe, 1), std::vector<ResourceItem>({ResourceItem(Resource::wood, 5), ResourceItem(Resource::stone, 5)})),
-    std::make_shared<Recipe>(std::make_unique<ToolItem>(&ToolType::pickaxe, 1), std::vector<ResourceItem>({ResourceItem(Resource::wood, 5), ResourceItem(Resource::stone, 5)})),
-    std::make_shared<Recipe>(std::make_unique<ToolItem>(&ToolType::shovel, 1), std::vector<ResourceItem>({ResourceItem(Resource::wood, 5), ResourceItem(Resource::stone, 5)})),
+    std::make_shared<Recipe>(std::make_unique<ToolItem>(&ToolDetails::sword, 1), std::vector<ResourceItem>({ResourceItem(Resource::wood, 5), ResourceItem(Resource::stone, 5)})),
+    std::make_shared<Recipe>(std::make_unique<ToolItem>(&ToolDetails::axe, 1), std::vector<ResourceItem>({ResourceItem(Resource::wood, 5), ResourceItem(Resource::stone, 5)})),
+    std::make_shared<Recipe>(std::make_unique<ToolItem>(&ToolDetails::hoe, 1), std::vector<ResourceItem>({ResourceItem(Resource::wood, 5), ResourceItem(Resource::stone, 5)})),
+    std::make_shared<Recipe>(std::make_unique<ToolItem>(&ToolDetails::pickaxe, 1), std::vector<ResourceItem>({ResourceItem(Resource::wood, 5), ResourceItem(Resource::stone, 5)})),
+    std::make_shared<Recipe>(std::make_unique<ToolItem>(&ToolDetails::shovel, 1), std::vector<ResourceItem>({ResourceItem(Resource::wood, 5), ResourceItem(Resource::stone, 5)})),
 };
 
 Workbench::Workbench() : Furniture("Workbench")

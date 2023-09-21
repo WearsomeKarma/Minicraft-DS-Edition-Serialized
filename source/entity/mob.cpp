@@ -166,3 +166,13 @@ bool Mob::findStartPos(Level &level)
 
   return false;
 }
+
+void Mob::serialize(Serializer &serializer)
+{
+  serializer.saveToFile_Fields(&walkDist, &dir);
+}
+
+void Mob::deserialize(Serializer &serializer)
+{
+  serializer.loadFromFile_Fields(&walkDist, &dir);
+}

@@ -91,7 +91,7 @@ bool HardRockTile::interact(Level &level, int xt, int yt, Player &player, Item &
 {
   if (auto tool = dynamic_cast<ToolItem *>(&item))
   {
-    if (tool->type == &ToolType::pickaxe && tool->level == 4)
+    if (tool->type == &ToolDetails::pickaxe && tool->level == 4)
     {
       if (player.payStamina(4 - tool->level))
       {

@@ -79,7 +79,7 @@ bool GrassTile::interact(Level &level, int xt, int yt, Player &player, Item &ite
 {
   if (auto tool = dynamic_cast<ToolItem *>(&item))
   {
-    if (tool->type == &ToolType::shovel)
+    if (tool->type == &ToolDetails::shovel)
     {
       if (player.payStamina(4 - tool->level))
       {
@@ -93,7 +93,7 @@ bool GrassTile::interact(Level &level, int xt, int yt, Player &player, Item &ite
       }
     }
 
-    if (tool->type == &ToolType::hoe)
+    if (tool->type == &ToolDetails::hoe)
     {
       if (player.payStamina(4 - tool->level))
       {

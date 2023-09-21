@@ -32,11 +32,14 @@ public:
   void setItemHeld(bool status);
   std::shared_ptr<Item> getActiveItem();
 
+  void serialize(Serializer &serializer) override;
+  void deserialize(Serializer &serializer) override;
+
 private:
   int attackTime = 0, attackDir = 0;
   int onStairDelay = 0;
-  bool swimming = false;
   int selectedItemIndex = 0;
+  bool swimming = false;
   bool itemHeld = false;
 
   void updateInventory(Game &game);

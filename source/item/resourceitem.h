@@ -8,7 +8,7 @@
 class ResourceItem : public Item
 {
 public:
-  const Resource::ID resourceId;
+  Resource::ID resourceId;
   int count = 1;
 
   ResourceItem(Resource::ID resourceId);
@@ -22,4 +22,7 @@ public:
   bool interactOn(Tile &tile, Level &level, int xt, int yt, Player &player, int attackDir) override;
   bool isDepleted();
   std::shared_ptr<Item> clone() override;
+
+  void serialize(Serializer &serializer) override;
+  void deserialize(Serializer &serializer) override;
 };

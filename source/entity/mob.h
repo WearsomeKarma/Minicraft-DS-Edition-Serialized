@@ -30,4 +30,7 @@ public:
   void hurt(Level &level, Mob &mob, int damage, int attackDir);
   void heal(Level &level, int heal);
   bool findStartPos(Level &level);
+
+  void serialize(Serializer &serializer) override;
+  void deserialize(Serializer &serializer) override;
 };

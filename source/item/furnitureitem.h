@@ -6,6 +6,7 @@
 class FurnitureItem : public Item
 {
 public:
+  std::shared_ptr<UUID> uuid;
   std::shared_ptr<Furniture> furniture;
   bool placed = false;
 
@@ -21,4 +22,7 @@ public:
   bool isDepleted() override;
   bool matches(const Item &item) override;
   std::shared_ptr<Item> clone() override;
+
+  void serialize(Serializer &serializer) override;
+  void deserialize(Serializer &serializer) override;
 };

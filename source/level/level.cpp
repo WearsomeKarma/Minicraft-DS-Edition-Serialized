@@ -11,7 +11,7 @@
 #include "../entity/hostile/zombie.h"
 #include "../gfx/lightmask.h"
 
-Level::Level(int w, int h, int depth, Level &parentLevel)
+Level::Level(int w, int h, char depth, Level &parentLevel)
     : Level(w, h, depth)
 {
   for (int y = 0; y < h; y++)
@@ -47,7 +47,7 @@ Level::Level(int w, int h, int depth, Level &parentLevel)
     }
 }
 
-Level::Level(int w, int h, int depth)
+Level::Level(int w, int h, char depth)
 {
   if (depth < 0)
   {
@@ -105,10 +105,8 @@ void Level::tick(Game &game)
     Tile::tiles[getTile(xt, yt)]->tick(*this, xt, yt);
   }
 
-  for (size_t i = 0; i < entities.size(); i++)
+  for (auto e : entities)
   {
-    auto e = entities[i];
-
     int xto = e->x >> 4;
     int yto = e->y >> 4;
 
@@ -116,7 +114,7 @@ void Level::tick(Game &game)
 
     if (e->removed)
     {
-      entities.erase(entities.begin() + i);
+      entities.erase(e);
       removeEntity(xto, yto, e);
     }
     else
@@ -472,4 +470,28 @@ std::vector<std::shared_ptr<Entity>> Level::getEntities(int x0, int y0, int x1, 
     }
   }
   return result;
+}
+
+void Level::serialize(Serializer &serializer) 
+{
+  serializer.saveToFile(&factoryUUID);
+  serializer.saveToFile(&random);
+  serializer.saveToFile(&depth);
+  serializer.saveToFile_Fields(&w, &monsterDensity);
+  serializer.saveToFile_Vector(*map);
+  serializer.saveToFile_Vector(tiles);
+  serializer.saveToFile_Vector(data);
+  serializer.saveToFile_Vector_Shared(entities);
+}
+
+void Level::deserialize(Serializer &serializer)
+{
+  serializer.loadFromFile(&factoryUUID);
+  serializer.loadFromFile(&random);
+  serializer.loadFromFile(&depth);
+  serializer.loadFromFile_Fields(&w, &monsterDensity);
+  serializer.loadFromFile_Vector(*map);
+  serializer.loadFromFile_Vector(tiles);
+  serializer.loadFromFile_Vector(data);
+  serializer.loadFromFile_Vector_Shared(entities);
 }

@@ -577,3 +577,17 @@ void Player::die(Game &game, Level &level)
   Mob::die(game, level);
   Sound::playerDeath.play();
 }
+
+void Player::serialize(Serializer &serializer) 
+{
+  serializer.saveToFile(&inventory);
+  serializer.saveToFile_Fields(&stamina, &selectedItemIndex);
+  serializer.saveToFile_Fields(&swimming, &itemHeld);
+}
+
+void Player::deserialize(Serializer &serializer) 
+{
+  serializer.loadFromFile(&inventory);
+  serializer.loadFromFile_Fields(&stamina, &selectedItemIndex);
+  serializer.loadFromFile_Fields(&swimming, &itemHeld);
+}

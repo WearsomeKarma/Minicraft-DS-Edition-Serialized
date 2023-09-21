@@ -4,9 +4,8 @@
 #include "../../sound/sound.h"
 
 SmashParticle::SmashParticle(int x, int y)
+: Particle(PK_SMASH, x, y)
 {
-  this->x = x;
-  this->y = y;
   Sound::monsterHurt.play();
 }
 
