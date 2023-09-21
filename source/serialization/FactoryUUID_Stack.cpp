@@ -30,7 +30,7 @@ void FactoryUUID_Stack::deserialize(Serializer &serializer)
   serializer.loadFromFile(&length);
   for(size_t i=0;i<length;i++)
   {
-    serializer.loadFromFile_Emplace
+    serializer.loadFromFile_EmplaceBack
         <unsigned int, std::list<unsigned int>>(availableIds);
   }
 }

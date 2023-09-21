@@ -1,4 +1,4 @@
-#include "tooltype.h"
+#include "tooldetails.h"
 
 ToolDetails ToolDetails::shovel = ToolDetails("Shvl", 0);
 ToolDetails ToolDetails::hoe = ToolDetails("Hoe", 1);

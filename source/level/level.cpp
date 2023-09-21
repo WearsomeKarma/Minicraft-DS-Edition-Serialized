@@ -105,8 +105,10 @@ void Level::tick(Game &game)
     Tile::tiles[getTile(xt, yt)]->tick(*this, xt, yt);
   }
 
-  for (auto e : entities)
+  for (size_t i = 0; i < entities.size(); i++)
   {
+    auto e = entities[i];
+
     int xto = e->x >> 4;
     int yto = e->y >> 4;
 
@@ -114,7 +116,7 @@ void Level::tick(Game &game)
 
     if (e->removed)
     {
-      entities.erase(e);
+      entities.erase(entities.begin() + i);
       removeEntity(xto, yto, e);
     }
     else
