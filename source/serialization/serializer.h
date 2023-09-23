@@ -30,17 +30,9 @@ public:
       errorKind = EK_MEMORY;
       return false;
     }
-    ISerializeable *ptr_serializeable;
-    if ((ptr_serializeable = std::dynamic_pointer_cast<ISerializeable>(ptr)))
-    {
-      ptr_serializeable->serialize(*this);
-      if(getError() != EK_NO_ERROR)
-        return false;
-    }
     if (!fread(ptr, sizeof(TPtr), 1, file))
     {
       errorKind = EK_FAIL_READ;
-      free(ptr);
       return false;
     }
     return true;
@@ -51,6 +43,7 @@ public:
     TPtr *ptr = new TPtr();
     if (loadFromFile(ptr))
       return ptr;
+    delete ptr;
     return NULL;
   }
   template<typename TPtr>
@@ -82,7 +75,7 @@ public:
   {
     do
     {
-      *addr_start = loadFromFile<TPtr>();
+      loadFromFile<TPtr>(addr_start);
     } while(addr_start++ <= addr_end);
     return getError() == EK_NO_ERROR;
   }
@@ -90,7 +83,7 @@ public:
   TPtr *loadFromFile_Lookahead()
   {
     unsigned int location = ftell(file);
-    TPtr ptr = new TPtr();
+    TPtr *ptr = new TPtr();
     if (!ptr)
     {
       errorKind = EK_MEMORY;
@@ -105,30 +98,58 @@ public:
     fseek(file, location, SEEK_SET);
     return ptr;
   }
-  template<typename TValue>
-  bool loadFromFile_Vector(std::vector<TValue> &vec)
+  template<typename TCollection, typename TValue>
+  bool loadFromFile_Collection(TCollection &collection)
   {
     size_t length;
     if (!loadFromFile(&length))
       return false;
     for (size_t i=0;i<length;i++)
     {
-      vec.emplace_back();
-      if (!loadFromFile(&vec.back()))
+      collection.emplace_back();
+      if (!loadFromFile(&collection.back()))
         return false;
     }
     return true;
   }
-  template<typename TValue>
-  bool loadFromFile_Vector_Shared(std::vector<std::shared_ptr<TValue>> &vec)
+  template<typename TCollection, typename TValue>
+  bool loadFromFile_Collection_Shared(TCollection &collection)
   {
     size_t length;
     if (!loadFromFile(&length))
       return false;
     for (size_t i=0;i<length;i++)
     {
-      vec.emplace_back();
-      if (!loadFromFile(vec.back().get()))
+      collection.emplace_back();
+      if (!loadFromFile(collection.back().get()))
+        return false;
+    }
+    return true;
+  }
+  template<typename TCollection, typename TValue>
+  bool loadFromFile_Collection_Serialized(TCollection &collection)
+  {
+    size_t length;
+    if (!loadFromFile(&length))
+      return false;
+    for (size_t i=0;i<length;i++)
+    {
+      collection.emplace_back(*this);
+      if (errorKind != EK_NO_ERROR)
+        return false;
+    }
+    return true;
+  }
+  template<typename TCollection, typename TValue>
+  bool loadFromFile_Collection_Shared_Serialized(TCollection &collection)
+  {
+    size_t length;
+    if (!loadFromFile(&length))
+      return false;
+    for (size_t i=0;i<length;i++)
+    {
+      collection.push_back(std::make_shared<TValue>(*this));
+      if (errorKind != EK_NO_ERROR)
         return false;
     }
     return true;
@@ -136,12 +157,6 @@ public:
   template<typename TPtr>
   bool saveToFile(TPtr *ptr)
   {
-    ISerializeable *ptr_serializeable;
-    if ((ptr_serializeable = std::dynamic_pointer_cast<ISerializeable>(ptr)))
-    {
-      ptr_serializeable->serialize(*this);
-      return getError() == EK_NO_ERROR;
-    }
     if (!fwrite(ptr, sizeof(TPtr), 1, file))
     {
       errorKind = EK_FAIL_WRITE;
@@ -149,28 +164,61 @@ public:
     }
     return true;
   }
-  template<typename TValue>
-  bool saveToFile_Vector(std::vector<TValue> &vec)
+  bool saveToFile(ISerializeable *ptr)
   {
-    size_t length = vec.size();
+    ptr->serialize(*this);
+    return errorKind == EK_NO_ERROR;
+  }
+  template<typename TCollection, typename TValue>
+  bool saveToFile_Collection(TCollection &collection)
+  {
+    size_t length = collection.size();
     if (!saveToFile(&length))
       return false;
-    for (auto &entry : vec)
+    for (TValue &entry : collection)
     {
       if (!saveToFile(&entry))
         return false;
     }
     return true;
   }
-  template<typename TValue>
-  bool saveToFile_Vector_Shared(std::vector<std::shared_ptr<TValue>> &vec)
+  template<typename TCollection, typename TValue>
+  bool saveToFile_Collection_Serialized(TCollection &collection)
   {
-    size_t length = vec.size();
+    size_t length = collection.size();
     if (!saveToFile(&length))
       return false;
-    for (auto &entry : vec)
+    for (TValue &entry : collection)
+    {
+      entry.serialize(*this);
+      if (errorKind != EK_NO_ERROR)
+        return false;
+    }
+    return true;
+  }
+  template<typename TCollection, typename TValue>
+  bool saveToFile_Collection_Shared(TCollection &collection)
+  {
+    size_t length = collection.size();
+    if (!saveToFile(&length))
+      return false;
+    for (std::shared_ptr<TValue> &entry : collection)
     {
       if (!saveToFile(entry.get()))
+        return false;
+    }
+    return true;
+  }
+  template<typename TCollection, typename TValue>
+  bool saveToFile_Collection_Shared_Serialized(TCollection &collection)
+  {
+    size_t length = collection.size();
+    if (!saveToFile(&length))
+      return false;
+    for (std::shared_ptr<TValue> &entry : collection)
+    {
+      entry->serialize(*this);
+      if (errorKind != EK_NO_ERROR)
         return false;
     }
     return true;

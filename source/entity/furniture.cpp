@@ -1,11 +1,27 @@
 #include "furniture.h"
 
 #include <memory>
+#include "entity.h"
 #include "player.h"
 #include "../item/furnitureitem.h"
 #include "../item/powergloveitem.h"
 
-Furniture::Furniture(std::string name)
+Furniture::Furniture(Serializer &serializer)
+: Entity(EK_FURNITURE)
+{
+  serializer.loadFromFile(&col);
+  serializer.loadFromFile(&sprite);
+
+  size_t length;
+  serializer.loadFromFile(&length);
+  char char_name[length];
+  serializer.saveToFile_Fields(&char_name[0], &char_name[length-1]);
+
+  name.assign(&char_name[0], length);
+}
+
+Furniture::Furniture(enum FurnitureKind furnitureKind, std::string name)
+: Entity(EK_FURNITURE), furnitureKind(furnitureKind)
 {
   this->name = name;
   xr = 3;
@@ -72,7 +88,7 @@ void Furniture::touchedBy(Level &level, Entity &entity)
 
 std::shared_ptr<Furniture> Furniture::clone()
 {
-  auto furniture = std::make_shared<Furniture>(name);
+  auto furniture = std::make_shared<Furniture>(furnitureKind, name);
   furniture->col = col;
   furniture->sprite = sprite;
 
@@ -89,17 +105,4 @@ void Furniture::serialize(Serializer &serializer)
 
   serializer.saveToFile(&length);
   serializer.saveToFile_Fields(&char_name[0], &char_name[length-1]);
-}
-
-void Furniture::deserialize(Serializer &serializer)
-{
-  serializer.loadFromFile(&col);
-  serializer.loadFromFile(&sprite);
-
-  size_t length;
-  serializer.loadFromFile(&length);
-  char char_name[length];
-  serializer.saveToFile_Fields(&char_name[0], &char_name[length-1]);
-
-  name.assign(&char_name[0], length);
 }

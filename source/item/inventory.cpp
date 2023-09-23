@@ -1,5 +1,11 @@
 #include "inventory.h"
 
+Inventory::Inventory(Serializer &serializer)
+{
+  serializer.loadFromFile_Collection_Shared
+      <std::vector<std::shared_ptr<Item>>, Item>(items);
+}
+
 void Inventory::add(std::shared_ptr<Item> item)
 {
   add(items.size(), item);
@@ -109,10 +115,6 @@ int Inventory::count(const Item &item)
 
 void Inventory::serialize(Serializer &serializer)
 {
-  serializer.saveToFile_Vector_Shared(items);
-}
-
-void Inventory::deserialize(Serializer &serializer)
-{
-  serializer.loadFromFile_Vector_Shared(items);
+  serializer.saveToFile_Collection_Shared
+      <std::vector<std::shared_ptr<Item>>, Item>(items);
 }

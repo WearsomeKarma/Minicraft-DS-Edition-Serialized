@@ -2,8 +2,14 @@
 
 #include "../../menu/furniture/storagemenu.h"
 
+Chest::Chest(Serializer &serializer) 
+: Furniture(FK_CHEST)
+{
+  inventory = std::make_shared<Inventory>(serializer);
+}
+
 Chest::Chest()
-    : Furniture("Chest")
+    : Furniture(FK_CHEST, "Chest")
 {
   inventory = std::make_shared<Inventory>();
   col = Color::get(-1, 110, 331, 552);
@@ -23,10 +29,6 @@ std::shared_ptr<Furniture> Chest::clone()
 
 void Chest::serialize(Serializer &serializer) 
 {
-  serializer.saveToFile(inventory.get());
+  inventory->serialize(serializer);
 }
 
-void Chest::deserialize(Serializer &serializer) 
-{
-  serializer.loadFromFile(inventory.get());
-}

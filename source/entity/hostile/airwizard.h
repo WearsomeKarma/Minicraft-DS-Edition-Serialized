@@ -4,15 +4,11 @@
 
 class AirWizard : public Mob
 {
-private:
-  int xa, ya;
-  int randomWalkTime = 0;
-  int attackDelay = 0;
-  int attackTime = 0;
-  int attackType = 0;
-
 public:
   AirWizard();
+  AirWizard(Serializer &serializer)
+      : Mob(serializer)
+  {}
 
   void tick(Game &game, Level &level, std::shared_ptr<Entity> self) override;
   void render(Screen &screen) override;

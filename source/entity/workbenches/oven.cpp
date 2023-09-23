@@ -9,7 +9,7 @@ static std::vector<std::shared_ptr<Recipe>> ovenRecipes = {
 };
 
 Oven::Oven()
-    : Furniture("Oven")
+    : Furniture(FK_OVEN, "Oven")
 {
   col = Color::get(-1, 000, 332, 442);
   sprite = 2;

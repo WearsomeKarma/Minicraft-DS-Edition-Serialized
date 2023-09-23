@@ -4,14 +4,11 @@
 
 class Zombie : public Mob
 {
-private:
-  int xa = 0;
-  int ya = 0;
-  int lvl;
-  int randomWalkTime = 0;
-
 public:
   Zombie(int lvl);
+  Zombie(Serializer &serializer)
+      : Mob(serializer)
+  {}
 
   void tick(Game &game, Level &level, std::shared_ptr<Entity> self) override;
   void render(Screen &screen) override;

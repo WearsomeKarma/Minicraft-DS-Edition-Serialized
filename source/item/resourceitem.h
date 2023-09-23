@@ -11,6 +11,7 @@ public:
   Resource::ID resourceId;
   int count = 1;
 
+  ResourceItem(Serializer &serializer);
   ResourceItem(Resource::ID resourceId);
   ResourceItem(Resource::ID resourceId, int count);
 
@@ -24,5 +25,4 @@ public:
   std::shared_ptr<Item> clone() override;
 
   void serialize(Serializer &serializer) override;
-  void deserialize(Serializer &serializer) override;
 };

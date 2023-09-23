@@ -5,6 +5,7 @@
 #include "../../level/level.h"
 
 AirWizard::AirWizard()
+: Mob(MK_AIRWIZARD)
 {
   x = random.nextInt(64 * 16);
   y = random.nextInt(64 * 16);

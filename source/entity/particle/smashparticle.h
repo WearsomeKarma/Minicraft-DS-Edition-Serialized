@@ -8,8 +8,8 @@
 class SmashParticle : public Particle
 {
 public:
+  SmashParticle(Serializer &serializer) : Particle(serializer) {}
   SmashParticle(int x, int y);
 
-  void tick(Game &game, Level &level, std::shared_ptr<Entity> self) override;
   void render(Screen &screen) override;
 };

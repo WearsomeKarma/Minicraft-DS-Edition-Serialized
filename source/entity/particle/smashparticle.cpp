@@ -4,18 +4,9 @@
 #include "../../sound/sound.h"
 
 SmashParticle::SmashParticle(int x, int y)
-: Particle(PK_SMASH, x, y)
+: Particle(PK_SMASH, x, y, 10)
 {
   Sound::monsterHurt.play();
-}
-
-void SmashParticle::tick(Game &game, Level &level, std::shared_ptr<Entity> self)
-{
-  time++;
-  if (time > 10)
-  {
-    remove();
-  }
 }
 
 void SmashParticle::render(Screen &screen)

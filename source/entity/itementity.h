@@ -25,6 +25,8 @@ public:
   double xx, yy, zz;
   std::shared_ptr<Item> item;
 
+  ItemEntity() : Entity(EK_ITEM) {}
+  ItemEntity(Serializer &serializer);
   ItemEntity(std::shared_ptr<Item> item, int x, int y);
 
   void tick(Game &game, Level &level, std::shared_ptr<Entity> self) override;
@@ -33,5 +35,4 @@ public:
   void take(Player &player);
 
   void serialize(Serializer &serializer) override;
-  void deserialize(Serializer &serializer) override;
 };

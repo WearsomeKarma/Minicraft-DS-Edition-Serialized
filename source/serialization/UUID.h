@@ -3,37 +3,53 @@
 #include "serializable.h"
 #include <memory>
 
-class IFactoryUUID;
-class UUID : public ISerializeable
+// Produced by an IFactoryUUID and given by weak_ptr.
+class UUID final
 {
 private:
   friend class IFactoryUUID;
   static constexpr unsigned char _offset =
       sizeof(int) - sizeof(char);
 
-  IFactoryUUID &originiatingFactory;
-  unsigned int id;
+  const unsigned int id;
 
-  UUID(IFactoryUUID &originiatingFactory, unsigned int id) 
-      : originiatingFactory(originiatingFactory),
-    id(id)
+  UUID(unsigned int id) 
+    : id(id)
   {}
 public:
-  unsigned int getID() { return id; }
-
-  ~UUID();
-
-  void serialize(Serializer &serializer) override;
-  void deserialize(Serializer &serializer) override;
+  unsigned int getID() const { return id; }
 };
 
-class IFactoryUUID
+class UUID_Field final : public ISerializeable_WithUUID
 {
-protected:
-  friend class UUID;
-  virtual void freeUUID(UUID &uuid) = 0;
-  std::shared_ptr<UUID> constructUUID(unsigned int id) 
-  { return std::shared_ptr<UUID>(new UUID(*this, id)); }
+  bool isActive = false;
+  union
+  {
+    unsigned int id;
+    std::weak_ptr<UUID> uuid_ptr;
+  };
+
 public:
-  virtual std::shared_ptr<UUID> getNewUUID() = 0;
+  UUID_Field();
+  UUID_Field(Serializer &serializer);
+  UUID_Field(unsigned int id);
+  UUID_Field(std::weak_ptr<UUID> uuid_ptr);
+
+  UUID_Field(UUID_Field &field);
+  UUID_Field& operator=(UUID_Field field);
+  UUID_Field(const UUID_Field &field);
+
+  ~UUID_Field() {}
+
+  bool getIsActive() const { return isActive; }
+  unsigned int getID() const;
+  bool getPtr(std::weak_ptr<UUID>& uuid_ptr);
+
+  void serialize(Serializer &serializer) override;
+  const UUID_Field &getUUID() const override
+  { return *this; }
+
+protected:
+  UUID_Field &getUUID() override
+  { return *this; }
 };

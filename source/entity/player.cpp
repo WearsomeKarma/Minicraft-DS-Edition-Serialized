@@ -6,12 +6,14 @@
 #include "../level/level.h"
 #include "../item/furnitureitem.h"
 #include "../item/powergloveitem.h"
+#include "mob.h"
 #include "workbenches/workbench.h"
 #include "particle/textparticle.h"
 #include "../menu/player/inventorymenu.h"
 #include "../menu/player/pausemenu.h"
 
 Player::Player()
+: Mob(MK_PLAYER)
 {
   x = 24;
   y = 24;
@@ -19,6 +21,14 @@ Player::Player()
 
   inventory.add(std::make_shared<FurnitureItem>(std::make_shared<Workbench>()));
   inventory.add(std::make_shared<PowerGloveItem>());
+}
+
+Player::Player(Serializer &serializer) 
+: Mob(MK_PLAYER)
+{
+  serializer.loadFromFile(&inventory);
+  serializer.loadFromFile_Fields(&stamina, &selectedItemIndex);
+  serializer.loadFromFile_Fields(&swimming, &itemHeld);
 }
 
 void Player::tick(Game &game, Level &level, std::shared_ptr<Entity> self)
@@ -583,11 +593,4 @@ void Player::serialize(Serializer &serializer)
   serializer.saveToFile(&inventory);
   serializer.saveToFile_Fields(&stamina, &selectedItemIndex);
   serializer.saveToFile_Fields(&swimming, &itemHeld);
-}
-
-void Player::deserialize(Serializer &serializer) 
-{
-  serializer.loadFromFile(&inventory);
-  serializer.loadFromFile_Fields(&stamina, &selectedItemIndex);
-  serializer.loadFromFile_Fields(&swimming, &itemHeld);
 }

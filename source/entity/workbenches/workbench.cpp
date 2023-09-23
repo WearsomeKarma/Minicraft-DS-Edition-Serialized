@@ -30,7 +30,7 @@ static std::vector<std::shared_ptr<Recipe>> workbenchRecipes = {
     std::make_shared<Recipe>(std::make_unique<ToolItem>(&ToolDetails::shovel, 1), std::vector<ResourceItem>({ResourceItem(Resource::wood, 5), ResourceItem(Resource::stone, 5)})),
 };
 
-Workbench::Workbench() : Furniture("Workbench")
+Workbench::Workbench() : Furniture(FK_WORKBENCH, "Workbench")
 {
   col = Color::get(-1, 100, 321, 431);
   sprite = 4;

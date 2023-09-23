@@ -1,6 +1,15 @@
 #include "itementity.h"
+#include "entity.h"
+
+ItemEntity::ItemEntity(Serializer &serializer)
+: Entity(EK_ITEM)
+{
+    serializer.loadFromFile_Fields(&lifeTime, &hurtTime);
+    serializer.loadFromFile_Fields(&xa, &zz);
+}
 
 ItemEntity::ItemEntity(std::shared_ptr<Item> item, int x, int y)
+: Entity(EK_ITEM)
 {
   this->item = item;
   xx = this->x = x;
@@ -86,10 +95,4 @@ void ItemEntity::serialize(Serializer &serializer)
   serializer.saveToFile_Fields(&xa, &zz);
   //TODO: replace shared_ptr with inventory and then
   //      work with that.
-}
-
-void ItemEntity::deserialize(Serializer &serializer)
-{
-    serializer.loadFromFile_Fields(&lifeTime, &hurtTime);
-    serializer.loadFromFile_Fields(&xa, &zz);
 }

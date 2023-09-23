@@ -9,6 +9,8 @@
 #include "UUID.h"
 #include "serializable.h"
 #include "serializer.h"
+#include "FactoryUUID.h"
+
 class FactoryUUID_Stack : public IFactoryUUID, public ISerializeable
 {
 private:
@@ -18,9 +20,9 @@ protected:
   void freeUUID(UUID &uuid) override;
 public:
   FactoryUUID_Stack();
+  FactoryUUID_Stack(Serializer &serializer);
 
-  std::shared_ptr<UUID> getNewUUID() override;
+  void assignUUID(ISerializeable_WithUUID &target) override;
 
   void serialize(Serializer &serializer) override;
-  void deserialize(Serializer &serializer) override;
 };

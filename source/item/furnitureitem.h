@@ -6,10 +6,11 @@
 class FurnitureItem : public Item
 {
 public:
-  std::shared_ptr<UUID> uuid;
+  UUID_Field uuid;
   std::shared_ptr<Furniture> furniture;
   bool placed = false;
 
+  FurnitureItem(Serializer &serializer);
   FurnitureItem(std::shared_ptr<Furniture> furniture);
 
   std::string getName() const override;
@@ -24,5 +25,4 @@ public:
   std::shared_ptr<Item> clone() override;
 
   void serialize(Serializer &serializer) override;
-  void deserialize(Serializer &serializer) override;
 };

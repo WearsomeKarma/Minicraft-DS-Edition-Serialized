@@ -3,6 +3,7 @@
 #include <memory>
 #include "../menu/listitem.h"
 #include "../serialization/serializable.h"
+#include "../serialization/serializer.h"
 
 class Screen;
 class Tile;
@@ -37,5 +38,4 @@ public:
   virtual std::shared_ptr<Item> clone() { return std::make_shared<Item>(); }
 
   void serialize(Serializer &serializer) override {}
-  void deserialize(Serializer &serializer) override {}
 };

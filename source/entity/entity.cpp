@@ -8,6 +8,14 @@
 
 Random Entity::random(time(NULL));
 
+Entity::Entity(Serializer &serializer)
+: uuid(serializer)
+{
+  serializer.loadFromFile(&entityKind);
+  serializer.loadFromFile_Fields(&x, &yr);
+  serializer.loadFromFile(&removed);
+}
+
 void Entity::remove()
 {
   removed = true;
@@ -115,14 +123,8 @@ bool Entity::interact(Player &player, Item &item, int attackDir)
 
 void Entity::serialize(Serializer &serializer)
 {
-  serializer.saveToFile(uuid.get());
+  uuid.serialize(serializer);
+  serializer.saveToFile(&entityKind);
   serializer.saveToFile_Fields(&x, &yr);
   serializer.saveToFile(&removed);
-}
-
-void Entity::deserialize(Serializer &serializer)
-{
-  serializer.loadFromFile(uuid.get());
-  serializer.loadFromFile_Fields(&x, &yr);
-  serializer.loadFromFile(&removed);
 }

@@ -3,6 +3,7 @@
 #include "../shim/random.h"
 #include "../serialization/UUID.h"
 #include "../serialization/serializable.h"
+#include "../serialization/serializer.h"
 
 #include <memory>
 
@@ -15,9 +16,19 @@ class Item;
 class ItemEntity;
 class Mob;
 
-class Entity : public ISerializeable
+enum EntityKind
 {
-  std::shared_ptr<UUID> uuid;
+  EK_UNKNOWN = 0,
+  EK_FURNITURE,
+  EK_MOB,
+  EK_PARTICLE,
+  EK_ITEM
+};
+
+class Entity : public ISerializeable_WithUUID
+{
+  UUID_Field uuid;
+  enum EntityKind entityKind;
 protected:
   static Random random;
 
@@ -29,7 +40,14 @@ public:
   int yr = 6;
   bool removed = false;
 
-  Entity(std::shared_ptr<UUID> uuid);
+  // USED FOR DESERIALIZATION!!! DO NOT USE!!!
+  Entity() {}
+  // -----------------------------------------
+
+  Entity(enum EntityKind entityKind) : entityKind(entityKind) {}
+  Entity(enum EntityKind entityKind, int x, int y)
+    : entityKind(entityKind), x(x), y(y) {}
+  Entity(Serializer &serializer);
 
   bool interact(Player &player, Item &item, int attackDir);
   void remove();
@@ -48,8 +66,14 @@ public:
   virtual bool use(Game &game, Level &level, Player &player, int attackDir) { return false; }
   virtual int getLightRadius() { return 0; }
 
+  enum EntityKind getKind() const { return entityKind; }
+
   void serialize(Serializer &serializer) override;
-  void deserialize(Serializer &serializer) override;
-  std::shared_ptr<UUID> getUUID() override 
+
+  const UUID_Field &getUUID() const override 
+  { return uuid; }
+
+protected:
+  UUID_Field &getUUID() override 
   { return uuid; }
 };

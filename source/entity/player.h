@@ -19,6 +19,7 @@ public:
   int invulnerableTime = 0;
 
   Player();
+  Player(Serializer &serializer);
 
   void tick(Game &game, Level &level, std::shared_ptr<Entity> self) override;
   void render(Screen &screen) override;
@@ -33,7 +34,6 @@ public:
   std::shared_ptr<Item> getActiveItem();
 
   void serialize(Serializer &serializer) override;
-  void deserialize(Serializer &serializer) override;
 
 private:
   int attackTime = 0, attackDir = 0;

@@ -4,6 +4,7 @@
 #include "menu/world/leveltransitionmenu.h"
 #include "menu/player/deadmenu.h"
 #include "menu/player/wonmenu.h"
+#include "serialization/serializable.h"
 
 const std::string Game::NAME = "Minicraft DS";
 
@@ -129,4 +130,17 @@ void Game::resetGame()
   wonTimer = 0;
   gameTime = 0;
   hasWon = false;
+}
+
+std::shared_ptr<Entity> Game::getByUUID(UUID_Field &uuid)
+{
+  if (!uuid.getIsActive())
+    return nullptr;
+  for(auto &level : levels)
+  {
+    std::shared_ptr<Entity> e = level.getByUUID(uuid);
+    if (e != nullptr)
+      return e;
+  }
+  return nullptr;
 }

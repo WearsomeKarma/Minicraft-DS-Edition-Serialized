@@ -5,6 +5,7 @@
 #include "../../gfx/color.h"
 
 Zombie::Zombie(int lvl)
+: Mob(MK_ZOMBIE)
 {
   this->lvl = lvl;
   x = random.nextInt(64 * 16);

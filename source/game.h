@@ -6,12 +6,15 @@
 #include "gfx/glscreen.h"
 #include "gfx/softwarescreen.h"
 #include "gfx/lightmask.h"
+#include "serialization/ContainerUUID.h"
+#include "serialization/serializable.h"
 
 #include <memory>
 
 class Menu;
+class Entity;
 
-class Game
+class Game : public IContainerUUID<Entity>
 {
 public:
   static const std::string NAME;
@@ -46,4 +49,6 @@ private:
   int wonTimer = 0;
   bool hasWon = false;
   void init();
+
+  std::shared_ptr<Entity> getByUUID(UUID_Field &uuid) override;
 };

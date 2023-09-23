@@ -2,19 +2,34 @@
 
 #include "entity.h"
 
+enum ParticleKind
+{
+  PK_UNSET,
+  PK_SMASH,
+  PK_TEXT,
+  PK_PROJECTILE,
+};
+
 class Particle : public Entity
 {
+  enum ParticleKind particleKind = PK_UNSET;
 protected:
   unsigned int time = 0;
   unsigned int duration = 0;
 
 public:
-  Particle(std::shared_ptr<UUID> uuid) : Entity(uuid) {}
-  Particle(std::shared_ptr<UUID> uuid, int x, int y);
+
+  // USED FOR DESERIALIZATION!!! DO NOT USE!!!
+  Particle() {}
+  // -----------------------------------------
+
+  Particle(Serializer &serializer);
+  Particle(enum ParticleKind particleKind) : Entity(EK_PARTICLE), particleKind(particleKind) {}
+  Particle(enum ParticleKind particleKind, int x, int y, int duration) : Entity(EK_PARTICLE, x, y), particleKind(particleKind) {}
 
   void tick(Game &game, Level &level, std::shared_ptr<Entity> self) override;
-  void render(Screen &screen) override;
+
+  enum ParticleKind getKind() const { return particleKind; }
 
   void serialize(Serializer &serializer) override;
-  void deserialize(Serializer &serializer) override;
 };

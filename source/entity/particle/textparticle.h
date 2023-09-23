@@ -14,8 +14,11 @@ public:
   double xa, ya, za;
   double xx, yy, zz;
 
+  TextParticle(Serializer &serializer);
   TextParticle(std::string msg, int x, int y, int col);
 
   void tick(Game &game, Level &level, std::shared_ptr<Entity> self) override;
   void render(Screen &screen) override;
+
+  void serialize(Serializer &serializer) override;
 };

@@ -24,6 +24,7 @@ public:
   ToolDetails *type;
   int level = 0;
 
+  ToolItem(Serializer &serializer);
   ToolItem(ToolDetails *type, int level);
 
   std::string getName() const override;
@@ -38,5 +39,4 @@ public:
   enum ToolItemKind getKind() { return toolItemKind; }
    
   void serialize(Serializer &serializer) override;
-  void deserialize(Serializer &serializer) override;
 };

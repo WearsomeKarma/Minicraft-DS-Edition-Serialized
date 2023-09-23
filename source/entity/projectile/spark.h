@@ -1,19 +1,15 @@
 #pragma once
 
 #include <memory>
-#include "../entity.h"
+#include "../projectile.h"
 
-class Spark : public Entity
+class Spark : public Projectile 
 {
-private:
-  int lifeTime;
-  int time;
-  std::weak_ptr<Entity> owner_weak;
-
 public:
-  double xa, ya;
-  double xx, yy;
 
+  Spark(Serializer &serializer)
+      : Projectile(serializer)
+  {}
   Spark(std::shared_ptr<Entity> owner, double xa, double ya);
 
   void tick(Game &game, Level &level, std::shared_ptr<Entity> self) override;

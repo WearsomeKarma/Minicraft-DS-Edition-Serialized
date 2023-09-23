@@ -10,7 +10,7 @@ static std::vector<std::shared_ptr<Recipe>> furnaceRecipes = {
     std::make_shared<Recipe>(std::make_unique<ResourceItem>(Resource::glass), std::vector<ResourceItem>({ResourceItem(Resource::sand, 4), ResourceItem(Resource::coal, 1)})),
 };
 
-Furnace::Furnace() : Furniture("Furnace")
+Furnace::Furnace() : Furniture(FK_FURNACE, "Furnace")
 {
   col = Color::get(-1, 000, 222, 333);
   sprite = 3;

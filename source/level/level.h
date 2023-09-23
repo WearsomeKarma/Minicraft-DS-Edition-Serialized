@@ -9,6 +9,7 @@
 #include "../serialization/serializable.h"
 #include "../serialization/serializer.h"
 #include "../serialization/FactoryUUID_Stack.h"
+#include "../serialization/ContainerUUID.h"
 #include "../game.h"
 #include "../entity/player.h"
 #include "../entity/entity.h"
@@ -17,7 +18,7 @@
 class Screen;
 class LightMask;
 
-class Level : public ISerializeable 
+class Level : public ISerializeable, public IContainerUUID<Entity>
 {
 private:
   FactoryUUID_Stack factoryUUID;
@@ -46,7 +47,7 @@ public:
   std::shared_ptr<Player> player;
 
   // For Serialization - DO NOT USE.
-  Level();
+  Level(Serializer &serializer);
 
   // utilize these
   Level(int w, int h, char depth);
@@ -65,6 +66,6 @@ public:
 
   std::vector<std::shared_ptr<Entity>> getEntities(int x0, int y0, int x1, int y1);
 
+  std::shared_ptr<Entity> getByUUID(UUID_Field &uuid) override;
   void serialize(Serializer &serializer) override;
-  void deserialize(Serializer &serializer) override;
 };

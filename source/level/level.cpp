@@ -11,6 +11,23 @@
 #include "../entity/hostile/zombie.h"
 #include "../gfx/lightmask.h"
 
+Level::Level(Serializer &serializer)
+{
+  serializer.loadFromFile(&factoryUUID);
+  serializer.loadFromFile(&random);
+  serializer.loadFromFile(&depth);
+  serializer.loadFromFile_Fields(&w, &monsterDensity);
+  map = std::make_shared<std::vector<unsigned char>>();
+  serializer.loadFromFile_Collection
+      <std::vector<unsigned char>, unsigned char>(*map);
+  serializer.loadFromFile_Collection
+      <std::vector<unsigned char>, unsigned char>(tiles);
+  serializer.loadFromFile_Collection
+      <std::vector<unsigned char>, unsigned char>(data);
+  serializer.loadFromFile_Collection_Shared_Serialized
+      <std::vector<std::shared_ptr<Entity>>, Entity>(entities);
+}
+
 Level::Level(int w, int h, char depth, Level &parentLevel)
     : Level(w, h, depth)
 {
@@ -474,26 +491,30 @@ std::vector<std::shared_ptr<Entity>> Level::getEntities(int x0, int y0, int x1, 
   return result;
 }
 
+std::shared_ptr<Entity> Level::getByUUID(UUID_Field &uuid)
+{
+  if (!uuid.getIsActive())
+    return nullptr;
+  for(auto &e : entities)
+  {
+    if (((const Entity&)*e).getUUID().getID() == uuid.getID())
+      return e;
+  }
+  return nullptr;
+}
+
 void Level::serialize(Serializer &serializer) 
 {
   serializer.saveToFile(&factoryUUID);
   serializer.saveToFile(&random);
   serializer.saveToFile(&depth);
   serializer.saveToFile_Fields(&w, &monsterDensity);
-  serializer.saveToFile_Vector(*map);
-  serializer.saveToFile_Vector(tiles);
-  serializer.saveToFile_Vector(data);
-  serializer.saveToFile_Vector_Shared(entities);
-}
-
-void Level::deserialize(Serializer &serializer)
-{
-  serializer.loadFromFile(&factoryUUID);
-  serializer.loadFromFile(&random);
-  serializer.loadFromFile(&depth);
-  serializer.loadFromFile_Fields(&w, &monsterDensity);
-  serializer.loadFromFile_Vector(*map);
-  serializer.loadFromFile_Vector(tiles);
-  serializer.loadFromFile_Vector(data);
-  serializer.loadFromFile_Vector_Shared(entities);
+  serializer.saveToFile_Collection
+      <std::vector<unsigned char>, unsigned char>(*map);
+  serializer.saveToFile_Collection
+      <std::vector<unsigned char>, unsigned char>(tiles);
+  serializer.saveToFile_Collection
+      <std::vector<unsigned char>, unsigned char>(data);
+  serializer.saveToFile_Collection_Shared_Serialized
+      <std::vector<std::shared_ptr<Entity>>, Entity>(entities);
 }

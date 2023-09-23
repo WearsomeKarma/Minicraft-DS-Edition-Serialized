@@ -2,14 +2,21 @@
 
 #include "../sound/sound.h"
 #include "../level/level.h"
+#include "entity.h"
 #include "particle/textparticle.h"
 
-Mob::Mob()
-    : Entity()
+Mob::Mob(enum MobKind mobKind)
+    : Entity(EK_MOB), mobKind(mobKind)
 {
   x = y = 8;
   xr = 4;
   yr = 3;
+}
+
+Mob::Mob(Serializer &serializer)
+: Entity(EK_MOB)
+{
+  serializer.loadFromFile_Fields(&walkDist, &dir);
 }
 
 void Mob::tick(Game &game, Level &level, std::shared_ptr<Entity> self)
@@ -170,9 +177,4 @@ bool Mob::findStartPos(Level &level)
 void Mob::serialize(Serializer &serializer)
 {
   serializer.saveToFile_Fields(&walkDist, &dir);
-}
-
-void Mob::deserialize(Serializer &serializer)
-{
-  serializer.loadFromFile_Fields(&walkDist, &dir);
 }

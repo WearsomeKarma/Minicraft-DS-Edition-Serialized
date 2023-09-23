@@ -2,6 +2,30 @@
 
 #include "../gfx/color.h"
 
+ToolItem::ToolItem(Serializer &serializer)
+{
+  serializer.loadFromFile(&random);
+  serializer.loadFromFile(&toolItemKind);
+  switch (toolItemKind)
+  {
+  case TIK_Axe:
+      type = &ToolDetails::axe;
+      break;
+  case TIK_Hoe:
+      type = &ToolDetails::hoe;
+      break;
+  case TIK_Pickaxe:
+      type = &ToolDetails::pickaxe;
+      break;
+  case TIK_Sword:
+      type = &ToolDetails::sword;
+      break;
+  case TIK_Shovel:
+      type = &ToolDetails::shovel;
+      break;
+  }
+}
+
 std::string LEVEL_NAMES[5] = {
     "Wood", "Rock", "Iron", "Gold", "Gem"};
 
@@ -85,27 +109,4 @@ void ToolItem::serialize(Serializer &serializer)
 {
   serializer.saveToFile(&random);
   serializer.saveToFile(&toolItemKind);
-}
-void ToolItem::deserialize(Serializer &serializer)
-{
-  serializer.loadFromFile(&random);
-  serializer.loadFromFile(&toolItemKind);
-  switch (toolItemKind)
-  {
-  case TIK_Axe:
-      type = &ToolDetails::axe;
-      break;
-  case TIK_Hoe:
-      type = &ToolDetails::hoe;
-      break;
-  case TIK_Pickaxe:
-      type = &ToolDetails::pickaxe;
-      break;
-  case TIK_Sword:
-      type = &ToolDetails::sword;
-      break;
-  case TIK_Shovel:
-      type = &ToolDetails::shovel;
-      break;
-  }
 }

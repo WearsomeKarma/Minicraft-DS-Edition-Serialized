@@ -1,5 +1,11 @@
 #include "resourceitem.h"
 
+ResourceItem::ResourceItem(Serializer &serializer)
+{
+  serializer.loadFromFile(&resourceId);
+  serializer.loadFromFile(&count);
+}
+
 ResourceItem::ResourceItem(Resource::ID resourceId)
     : resourceId(resourceId)
 {
@@ -70,10 +76,4 @@ void ResourceItem::serialize(Serializer &serializer)
 {
   serializer.saveToFile(&resourceId);
   serializer.saveToFile(&count);
-}
-
-void ResourceItem::deserialize(Serializer &serializer)
-{
-  serializer.loadFromFile(&resourceId);
-  serializer.loadFromFile(&count);
 }

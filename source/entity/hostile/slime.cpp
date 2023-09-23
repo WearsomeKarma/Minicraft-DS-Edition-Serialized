@@ -5,6 +5,7 @@
 #include "../../gfx/color.h"
 
 Slime::Slime(int lvl)
+: Mob(MK_SLIME)
 {
   this->lvl = lvl;
   x = random.nextInt(64 * 16);

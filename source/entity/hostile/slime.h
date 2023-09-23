@@ -4,14 +4,11 @@
 
 class Slime : public Mob
 {
-private:
-  int xa = 0;
-  int ya = 0;
-  int jumpTime = 0;
-  int lvl;
-
 public:
   Slime(int lvl);
+  Slime(Serializer &serializer)
+      : Mob(serializer)
+  {}
 
   void tick(Game &game, Level &level, std::shared_ptr<Entity> self) override;
   void render(Screen &screen) override;

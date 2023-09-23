@@ -12,6 +12,9 @@ class Inventory : public ISerializeable
 public:
   std::vector<std::shared_ptr<Item>> items;
 
+  Inventory() {}
+  Inventory(Serializer &serializer);
+
   void add(std::shared_ptr<Item> item);
   void add(int slot, std::shared_ptr<Item> item);
   bool hasResources(Resource::ID resourceId, int count);
@@ -20,7 +23,6 @@ public:
   int count(const Item &item);
 
   void serialize(Serializer &serializer) override;
-  void deserialize(Serializer &serializer) override;
 
 private:
   std::shared_ptr<ResourceItem> findResource(Resource::ID resourceId);

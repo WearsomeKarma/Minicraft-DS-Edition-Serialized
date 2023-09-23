@@ -24,7 +24,7 @@ static std::vector<std::shared_ptr<Recipe>> anvilRecipes = {
 };
 
 Anvil::Anvil()
-    : Furniture("Anvil")
+    : Furniture(FK_ANVIL, "Anvil")
 {
   col = Color::get(-1, 000, 111, 222);
   sprite = 0;

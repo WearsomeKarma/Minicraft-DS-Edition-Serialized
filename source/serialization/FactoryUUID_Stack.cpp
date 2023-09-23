@@ -1,36 +1,36 @@
 #include "FactoryUUID_Stack.h"
 #include "UUID.h"
+#include "serializable.h"
+#include "serializer.h"
 #include <cstddef>
+
+FactoryUUID_Stack::FactoryUUID_Stack()
+{
+  availableIds.emplace_back(1);
+}
+
+FactoryUUID_Stack::FactoryUUID_Stack(Serializer &serializer)
+{
+  serializer.loadFromFile_Collection
+      <std::list<unsigned int>, unsigned int>(availableIds);
+}
 
 void FactoryUUID_Stack::freeUUID(UUID &uuid)
 {
   availableIds.emplace_back(uuid.getID());
 }
 
-std::shared_ptr<UUID> FactoryUUID_Stack::getNewUUID()
+void FactoryUUID_Stack::assignUUID(ISerializeable_WithUUID &target)
 {
   unsigned int id = availableIds.back();
   availableIds.erase(availableIds.end());
   if (availableIds.empty())
     availableIds.emplace_back(id + 1);
-  return constructUUID(id);
+  performAssignmentOfUUID(target, makeUUID(id));
 }
 
 void FactoryUUID_Stack::serialize(Serializer &serializer)
 {
-  size_t length = availableIds.size();
-  serializer.saveToFile(&length);
-  for(auto id : availableIds)
-    serializer.saveToFile(&id);
-}
-
-void FactoryUUID_Stack::deserialize(Serializer &serializer)
-{
-  size_t length;
-  serializer.loadFromFile(&length);
-  for(size_t i=0;i<length;i++)
-  {
-    serializer.loadFromFile_EmplaceBack
-        <unsigned int, std::list<unsigned int>>(availableIds);
-  }
+  serializer.saveToFile_Collection
+      <std::list<unsigned int>, unsigned int>(availableIds);
 }
