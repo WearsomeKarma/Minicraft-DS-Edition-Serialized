@@ -11,21 +11,30 @@
 #include "../entity/hostile/zombie.h"
 #include "../gfx/lightmask.h"
 
+#include "../serialization/entity/entitydeserializer.h"
+
 Level::Level(Serializer &serializer)
 {
+  printf("\x1b[1;0HLEVEL factoryUUID            ");
   serializer.loadFromFile(&factoryUUID);
+  printf("\x1b[1;0HLEVEL fields            ");
   serializer.loadFromFile(&random);
   serializer.loadFromFile(&depth);
   serializer.loadFromFile_Fields(&w, &monsterDensity);
+  printf("\x1b[1;0HLEVEL map            ");
   map = std::make_shared<std::vector<unsigned char>>();
   serializer.loadFromFile_Collection
       <std::vector<unsigned char>, unsigned char>(*map);
+  printf("\x1b[1;0HLEVEL tiles            ");
   serializer.loadFromFile_Collection
       <std::vector<unsigned char>, unsigned char>(tiles);
+  printf("\x1b[1;0HLEVEL data            ");
   serializer.loadFromFile_Collection
       <std::vector<unsigned char>, unsigned char>(data);
+  printf("\x1b[1;0HLEVEL entities            ");
   serializer.loadFromFile_Collection_Shared_Serialized
-      <std::vector<std::shared_ptr<Entity>>, Entity>(entities);
+      <std::vector<std::shared_ptr<Entity>>, Entity>
+      (entities);
 }
 
 Level::Level(int w, int h, char depth, Level &parentLevel)
@@ -505,16 +514,22 @@ std::shared_ptr<Entity> Level::getByUUID(UUID_Field &uuid)
 
 void Level::serialize(Serializer &serializer) 
 {
+  printf("\x1b[1;0HLEVEL factoryUUID            ");
   serializer.saveToFile(&factoryUUID);
+  printf("\x1b[1;0HLEVEL fields            ");
   serializer.saveToFile(&random);
   serializer.saveToFile(&depth);
   serializer.saveToFile_Fields(&w, &monsterDensity);
+  printf("\x1b[1;0HLEVEL map            ");
   serializer.saveToFile_Collection
       <std::vector<unsigned char>, unsigned char>(*map);
+  printf("\x1b[1;0HLEVEL tiles            ");
   serializer.saveToFile_Collection
       <std::vector<unsigned char>, unsigned char>(tiles);
+  printf("\x1b[1;0HLEVEL data            ");
   serializer.saveToFile_Collection
       <std::vector<unsigned char>, unsigned char>(data);
+  printf("\x1b[1;0HLEVEL entities            ");
   serializer.saveToFile_Collection_Shared_Serialized
       <std::vector<std::shared_ptr<Entity>>, Entity>(entities);
 }

@@ -1,18 +1,17 @@
 #pragma once
 
 #include "../menu.h"
+#include "../../serialization/serializer.h"
 
-class PauseMenu : public Menu
+class LoadMenu : public Menu
 {
+private:
+  std::string currentStepName;
+  signed char currentStep;
   Serializer serializer;
-  char selected = 0;
-  signed char saveStep = 0;
-  std::string saveStepName;
-  bool isSaving = false;
 
-  void save(Game &game);
 public:
-  PauseMenu();
+  LoadMenu();
 
   void tick(Game &game) override;
   void render(Screen &screen, Screen &bottomScreen) override;

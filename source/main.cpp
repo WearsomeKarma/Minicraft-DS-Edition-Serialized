@@ -1,5 +1,6 @@
 #include <nds.h>
 #include <nds/arm9/background.h>
+#include <fat.h>
 #include <gl2d.h>
 #include "game.h"
 #include "icons.h"
@@ -93,6 +94,11 @@ void initialize()
   initializeMainEngine();
   initializeSubEngine();
   initializeResources();
+  fatInitDefault();
+
+    //TODO: remove console
+  videoSetModeSub(MODE_0_2D);
+  consoleDemoInit();
 }
 
 void incrementTime()

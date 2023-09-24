@@ -8,8 +8,9 @@
 #include "../world/generatemenu.h"
 #include "instructionsmenu.h"
 #include "aboutmenu.h"
+#include "../world/loadmenu.h"
 
-std::vector<std::string> options = {"Start game", "How to play", "About"};
+std::vector<std::string> options = {"Start game", "Load game", "How to play", "About"};
 
 void TitleMenu::tick(Game &game)
 {
@@ -35,9 +36,13 @@ void TitleMenu::tick(Game &game)
     }
     if (selected == 1)
     {
+      game.enterMenu(std::make_unique<LoadMenu>());
+    }
+    if (selected == 2)
+    {
       game.enterMenu(std::make_unique<InstructionsMenu>());
     }
-    else if (selected == 2)
+    else if (selected == 3)
     {
       game.enterMenu(std::make_unique<AboutMenu>());
     }
@@ -73,7 +78,7 @@ void TitleMenu::render(Screen &screen, Screen &bottomScreen)
   int optionColor = Color::get(0, 222, 222, 222);
   int highlightColor = Color::get(0, 555, 555, 555);
 
-  for (int i = 0; i < 3; i++)
+  for (int i = 0; i < options.size(); i++)
   {
     auto msg = options[i];
 
