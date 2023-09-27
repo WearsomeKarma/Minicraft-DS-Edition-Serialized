@@ -3,10 +3,10 @@
 #include <memory>
 #include "UUID.h"
 
-template<typename TSharedPtr>
+template<typename TValue>
 class IContainerUUID
 {
 public:
-  virtual bool assignUUID(TSharedPtr &target) { return false; }
-  virtual std::shared_ptr<TSharedPtr> getByUUID(UUID_Field &uuid) = 0;
+  virtual bool assignUUID(TValue &target) { return false; }
+  virtual TValue getByUUID(UUID_Field &uuid) = 0;
 };

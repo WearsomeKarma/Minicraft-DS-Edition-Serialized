@@ -40,10 +40,6 @@ public:
   int tickTime = 0;
   int dir = 0;
 
-  // USED FOR DESERIALIZATION!!! DO NOT USE!!!
-  Mob() {}
-  // -----------------------------------------
-
   Mob(enum MobKind mobKind);
   Mob(Serializer &serializer);
 

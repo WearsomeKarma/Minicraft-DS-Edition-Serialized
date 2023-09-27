@@ -11,13 +11,13 @@
 std::shared_ptr<Entity> FurnitureDeserializer::deserialize(
         Serializer &serializer)
 {
-  BEGIN_DESERIALIZATION(serializer, Furniture)
-      CASE_DESERIALIZE__WITH(FK_UNKNOWN, nullptr)
-      CASE_DESERIALIZE__AS(FK_ANVIL, serializer, Anvil, Furniture)
-      CASE_DESERIALIZE__AS(FK_CHEST, serializer, Chest, Furniture)
-      CASE_DESERIALIZE__AS(FK_FURNACE, serializer, Furnace, Furniture)
-      CASE_DESERIALIZE__AS(FK_LANTERN, serializer, Lantern, Furniture)
-      CASE_DESERIALIZE__AS(FK_OVEN, serializer, Oven, Furniture)
-      CASE_DESERIALIZE__AS(FK_WORKBENCH, serializer, Workbench, Furniture)
+  BEGIN_DESERIALIZATION__OF_SERIALIZEABLE(serializer, Furniture)
+    CASE_DESERIALIZE__WITH(FK_UNKNOWN, nullptr)
+    CASE_DESERIALIZE__AS(FK_ANVIL, serializer, Anvil, Furniture)
+    CASE_DESERIALIZE__AS(FK_CHEST, serializer, Chest, Furniture)
+    CASE_DESERIALIZE__AS(FK_FURNACE, serializer, Furnace, Furniture)
+    CASE_DESERIALIZE__AS(FK_LANTERN, serializer, Lantern, Furniture)
+    CASE_DESERIALIZE__AS(FK_OVEN, serializer, Oven, Furniture)
+    CASE_DESERIALIZE__AS(FK_WORKBENCH, serializer, Workbench, Furniture)
   END_DESERIALIZATION__AS(Entity)
 }

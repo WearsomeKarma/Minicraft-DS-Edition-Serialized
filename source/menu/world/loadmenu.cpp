@@ -2,12 +2,13 @@
 
 #include "../player/ingamemenu.h"
 #include <nds.h>
+#include "../../exception.h"
 
 LoadMenu::LoadMenu()
 {
   currentStep = 0;
   currentStepName = "Loading Sky";
-  serializer.open("minicraft.dat");
+  serializer.openRead("minicraft.dat");
 }
 
 void LoadMenu::tick(Game &game)
@@ -43,6 +44,7 @@ void LoadMenu::tick(Game &game)
     currentStepName = "Loading Overworld";
     break;
   case 1:
+    Exception::raise();
     serializer.loadFromFile_EmplaceBack_Serialized<Level>(game.levels);
     if (serializer.hasError())
     {

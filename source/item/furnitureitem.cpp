@@ -1,13 +1,17 @@
 #include "furnitureitem.h"
+#include "item.h"
+#include <memory>
+#include "../exception.h"
 
 FurnitureItem::FurnitureItem(Serializer &serializer)
+    : Item(IK_FURNITURE)
 {
-  uuid = UUID_Field(serializer);
+  furniture_uuid = UUID_Field(serializer);
   serializer.loadFromFile(&placed);
 }
 
 FurnitureItem::FurnitureItem(std::shared_ptr<Furniture> furniture)
-    : furniture(furniture), uuid(((const Furniture&)*furniture).getUUID()) {}
+    : Item(IK_FURNITURE), furniture(furniture), furniture_uuid(((const Furniture&)*furniture).getUUID()) {}
 
 std::string FurnitureItem::getName() const
 {
@@ -60,9 +64,11 @@ bool FurnitureItem::isDepleted()
 
 bool FurnitureItem::matches(const Item &item)
 {
+  if (!furniture_uuid.getIsActive())
+    return false;
   if (auto furnitureItem = dynamic_cast<const FurnitureItem *>(&item))
   {
-    return furniture.get() == furnitureItem->furniture.get();
+    return furniture_uuid.getID() == furnitureItem->furniture_uuid.getID();
   }
   return false;
 }
@@ -74,6 +80,18 @@ std::shared_ptr<Item> FurnitureItem::clone()
 
 void FurnitureItem::serialize(Serializer &serializer) 
 {
-  uuid.serialize(serializer);
+  furniture_uuid.serialize(serializer);
   serializer.saveToFile(&placed);
+}
+
+void FurnitureItem::resolveValueOfUUID(
+        IContainerUUID<std::shared_ptr<Entity>>& container)
+{
+  furniture = std::dynamic_pointer_cast<Furniture>(
+          container.getByUUID(furniture_uuid));
+  if (!furniture)
+  {
+    printf("\x1b[11;0HFurnitureItem.resolveValueOfUUID is nullptr");
+    Exception::raise();
+  }
 }

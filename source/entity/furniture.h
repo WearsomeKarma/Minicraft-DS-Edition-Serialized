@@ -22,10 +22,6 @@ public:
   int col, sprite;
   std::string name;
 
-  // USED FOR DESERIALIZATION!!! DO NOT USE!!!
-  Furniture() {}
-  // -----------------------------------------
-
   Furniture(enum FurnitureKind furnitureKind) 
       : Entity(EK_FURNITURE), furnitureKind(furnitureKind) {}
   Furniture(Serializer &serializer);

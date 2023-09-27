@@ -69,7 +69,7 @@ void PauseMenu::save(Game &game)
       saveStepName = "Saving Sky...";
       break;
     case 1:
-      if (!serializer.open("minicraft.dat"))
+      if (!serializer.openWrite("minicraft.dat"))
       {
         saveStep = -1;
         return;
@@ -116,6 +116,7 @@ void PauseMenu::save(Game &game)
         saveStep = -1;
         return;
       }
+      serializer.close();
       saveStepName = "Done!";
       break;
     case 6:

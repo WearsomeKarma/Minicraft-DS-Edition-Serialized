@@ -12,7 +12,7 @@ void Recipe::checkCanCraft(Player &player)
   {
     if (auto resourceItem = dynamic_cast<const ResourceItem *>(&item))
     {
-      if (!player.inventory.hasResources(resourceItem->resourceId, resourceItem->count))
+      if (!player.inventory->hasResources(resourceItem->resourceId, resourceItem->count))
       {
         canCraft = false;
         return;
@@ -24,13 +24,13 @@ void Recipe::checkCanCraft(Player &player)
 
 void Recipe::craft(Player &player)
 {
-  player.inventory.add(result->clone());
+  player.inventory->add(result->clone());
 
   for (auto &item : requirements)
   {
     if (auto resourceItem = dynamic_cast<const ResourceItem *>(&item))
     {
-      player.inventory.removeResource(resourceItem->resourceId, resourceItem->count);
+      player.inventory->removeResource(resourceItem->resourceId, resourceItem->count);
     }
   }
 }

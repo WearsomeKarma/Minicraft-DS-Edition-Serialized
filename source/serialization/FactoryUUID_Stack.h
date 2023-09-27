@@ -1,5 +1,5 @@
 #pragma once
-#include <list>
+#include <vector>
 
 //
 // Implementation of FactoryUUID, it uses a stack to
@@ -15,7 +15,7 @@ class FactoryUUID_Stack : public IFactoryUUID, public ISerializeable
 {
 private:
   // concrete type of vector, but we instrinsicly treat it as a stack
-  std::list<unsigned int> availableIds;
+  std::vector<unsigned int> availableIds;
 protected:
   void freeUUID(UUID &uuid) override;
 public:

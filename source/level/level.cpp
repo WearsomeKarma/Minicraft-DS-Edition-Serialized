@@ -13,28 +13,58 @@
 
 #include "../serialization/entity/entitydeserializer.h"
 
+#include "../exception.h"
+
 Level::Level(Serializer &serializer)
 {
   printf("\x1b[1;0HLEVEL factoryUUID            ");
-  serializer.loadFromFile(&factoryUUID);
+  factoryUUID = FactoryUUID_Stack(serializer);
+  if (serializer.hasError())
+    Exception::raise();
   printf("\x1b[1;0HLEVEL fields            ");
   serializer.loadFromFile(&random);
+  if (serializer.hasError())
+    Exception::raise();
   serializer.loadFromFile(&depth);
+  if (serializer.hasError())
+    Exception::raise();
   serializer.loadFromFile_Fields(&w, &monsterDensity);
+  if (serializer.hasError())
+    Exception::raise();
   printf("\x1b[1;0HLEVEL map            ");
   map = std::make_shared<std::vector<unsigned char>>();
+  if (serializer.hasError())
+    Exception::raise();
   serializer.loadFromFile_Collection
       <std::vector<unsigned char>, unsigned char>(*map);
+  if (serializer.hasError())
+    Exception::raise();
   printf("\x1b[1;0HLEVEL tiles            ");
   serializer.loadFromFile_Collection
       <std::vector<unsigned char>, unsigned char>(tiles);
+  if (serializer.hasError())
+    Exception::raise();
   printf("\x1b[1;0HLEVEL data            ");
   serializer.loadFromFile_Collection
       <std::vector<unsigned char>, unsigned char>(data);
+  if (serializer.hasError())
+    Exception::raise();
   printf("\x1b[1;0HLEVEL entities            ");
-  serializer.loadFromFile_Collection_Shared_Serialized
-      <std::vector<std::shared_ptr<Entity>>, Entity>
-      (entities);
+  if (serializer.hasError())
+    Exception::raise();
+  size_t length;
+  serializer.loadFromFile(&length);
+  if (serializer.hasError())
+    Exception::raise();
+  for(size_t i=0;i<length;i++)
+  {
+    entities.push_back(EntityDeserializer::deserialize(serializer));
+    if (serializer.hasError())
+      Exception::raise();
+  }
+  // serializer.loadFromFile_Collection_Shared_Serialized
+  //     <std::vector<std::shared_ptr<Entity>>, Entity>
+  //     (entities);
 }
 
 Level::Level(int w, int h, char depth, Level &parentLevel)
@@ -515,7 +545,7 @@ std::shared_ptr<Entity> Level::getByUUID(UUID_Field &uuid)
 void Level::serialize(Serializer &serializer) 
 {
   printf("\x1b[1;0HLEVEL factoryUUID            ");
-  serializer.saveToFile(&factoryUUID);
+  factoryUUID.serialize(serializer);
   printf("\x1b[1;0HLEVEL fields            ");
   serializer.saveToFile(&random);
   serializer.saveToFile(&depth);

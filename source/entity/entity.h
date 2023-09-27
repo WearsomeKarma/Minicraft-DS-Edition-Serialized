@@ -15,6 +15,7 @@ class Player;
 class Item;
 class ItemEntity;
 class Mob;
+class Inventory;
 
 enum EntityKind
 {
@@ -40,10 +41,6 @@ public:
   int yr = 6;
   bool removed = false;
 
-  // USED FOR DESERIALIZATION!!! DO NOT USE!!!
-  Entity() {}
-  // -----------------------------------------
-
   Entity(enum EntityKind entityKind) : entityKind(entityKind) {}
   Entity(enum EntityKind entityKind, int x, int y)
     : entityKind(entityKind), x(x), y(y) {}
@@ -66,6 +63,8 @@ public:
   virtual bool use(Game &game, Level &level, Player &player, int attackDir) { return false; }
   virtual int getLightRadius() { return 0; }
 
+  virtual bool hasInventory() { return false; }
+  virtual std::shared_ptr<Inventory> getInventory() { return nullptr; }
   enum EntityKind getKind() const { return entityKind; }
 
   void serialize(Serializer &serializer) override;

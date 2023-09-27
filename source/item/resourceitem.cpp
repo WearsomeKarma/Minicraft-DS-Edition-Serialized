@@ -1,18 +1,20 @@
 #include "resourceitem.h"
+#include "item.h"
 
 ResourceItem::ResourceItem(Serializer &serializer)
+    : Item(serializer)
 {
   serializer.loadFromFile(&resourceId);
   serializer.loadFromFile(&count);
 }
 
 ResourceItem::ResourceItem(Resource::ID resourceId)
-    : resourceId(resourceId)
+    : Item(IK_RESOURCE), resourceId(resourceId)
 {
 }
 
 ResourceItem::ResourceItem(Resource::ID resourceId, int count)
-    : resourceId(resourceId)
+    : Item(IK_RESOURCE), resourceId(resourceId)
 {
   this->count = count;
 }

@@ -14,7 +14,7 @@
 class Menu;
 class Entity;
 
-class Game : public IContainerUUID<Entity>
+class Game : public IContainerUUID<std::shared_ptr<Entity>>
 {
 public:
   static const std::string NAME;

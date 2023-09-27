@@ -3,10 +3,11 @@
 #include "item.h"
 #include "../entity/furniture.h"
 
-class FurnitureItem : public Item
+class FurnitureItem : public Item, 
+    public IReferencesUUID<std::shared_ptr<Entity>>
 {
 public:
-  UUID_Field uuid;
+  UUID_Field furniture_uuid;
   std::shared_ptr<Furniture> furniture;
   bool placed = false;
 
@@ -24,5 +25,8 @@ public:
   bool matches(const Item &item) override;
   std::shared_ptr<Item> clone() override;
 
+  const UUID_Field &getUUID() const override { return furniture_uuid; }
   void serialize(Serializer &serializer) override;
+protected:
+  void resolveValueOfUUID(IContainerUUID<std::shared_ptr<Entity>>& contianer) override;
 };

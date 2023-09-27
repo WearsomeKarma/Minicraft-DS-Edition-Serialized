@@ -1,9 +1,16 @@
 #include "inventory.h"
 
+#include "../serialization/item/itemdeserializer.h"
+#include <memory>
+
 Inventory::Inventory(Serializer &serializer)
 {
-  serializer.loadFromFile_Collection_Shared
-      <std::vector<std::shared_ptr<Item>>, Item>(items);
+  size_t length;
+  serializer.loadFromFile(&length);
+  for(size_t i=0;i<length;i++)
+  {
+    add(ItemDeserializer::deserialize(serializer));
+  }
 }
 
 void Inventory::add(std::shared_ptr<Item> item)
@@ -115,6 +122,20 @@ int Inventory::count(const Item &item)
 
 void Inventory::serialize(Serializer &serializer)
 {
-  serializer.saveToFile_Collection_Shared
+  serializer.saveToFile_Collection_Shared_Serialized
       <std::vector<std::shared_ptr<Item>>, Item>(items);
+}
+
+void Inventory::handleDependentsResolutionOfUUIDs(
+      IContainerUUID<std::shared_ptr<Entity>>& container)
+{
+  for(auto &item : items)
+  {
+    if (auto itemReferencingUUID = 
+            std::dynamic_pointer_cast<IReferencesUUID<std::shared_ptr<Entity>>>
+            (item))
+    {
+      itemReferencingUUID->resolveValueOfUUID(container);
+    }
+  }
 }

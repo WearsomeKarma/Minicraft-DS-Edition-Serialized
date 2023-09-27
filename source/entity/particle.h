@@ -19,10 +19,6 @@ protected:
 
 public:
 
-  // USED FOR DESERIALIZATION!!! DO NOT USE!!!
-  Particle() {}
-  // -----------------------------------------
-
   Particle(Serializer &serializer);
   Particle(enum ParticleKind particleKind) : Entity(EK_PARTICLE), particleKind(particleKind) {}
   Particle(enum ParticleKind particleKind, int x, int y, int duration) : Entity(EK_PARTICLE, x, y), particleKind(particleKind) {}

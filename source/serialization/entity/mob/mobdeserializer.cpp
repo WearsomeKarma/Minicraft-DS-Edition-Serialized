@@ -7,7 +7,7 @@
 
 std::shared_ptr<Entity> MobDeserializer::deserialize(Serializer &serializer)
 {
-  BEGIN_DESERIALIZATION(serializer, Mob)
+  BEGIN_DESERIALIZATION__OF_SERIALIZEABLE(serializer, Mob)
       CASE_DESERIALIZE__AS(MK_AIRWIZARD, serializer, AirWizard, Mob)
       CASE_DESERIALIZE__AS(MK_SLIME, serializer, Slime, Mob)
       CASE_DESERIALIZE__AS(MK_ZOMBIE, serializer, Zombie, Mob)

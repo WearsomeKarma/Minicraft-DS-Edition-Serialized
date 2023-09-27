@@ -19,6 +19,7 @@ Player::Player()
   y = 24;
   stamina = maxStamina;
 
+  inventory = std::make_unique<Inventory>();
   inventory.add(std::make_shared<FurnitureItem>(std::make_shared<Workbench>()));
   inventory.add(std::make_shared<PowerGloveItem>());
 }
@@ -26,7 +27,7 @@ Player::Player()
 Player::Player(Serializer &serializer) 
 : Mob(MK_PLAYER)
 {
-  serializer.loadFromFile(&inventory);
+  inventory = std::make_shared<Inventory>(serializer);
   serializer.loadFromFile_Fields(&stamina, &selectedItemIndex);
   serializer.loadFromFile_Fields(&swimming, &itemHeld);
 }
@@ -590,7 +591,7 @@ void Player::die(Game &game, Level &level)
 
 void Player::serialize(Serializer &serializer) 
 {
-  serializer.saveToFile(&inventory);
+  inventory.serialize(serializer);
   serializer.saveToFile_Fields(&stamina, &selectedItemIndex);
   serializer.saveToFile_Fields(&swimming, &itemHeld);
 }

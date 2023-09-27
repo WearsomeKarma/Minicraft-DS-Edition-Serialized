@@ -28,7 +28,7 @@ ASSETS    := res
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
-CFLAGS := -Wall -O3\
+CFLAGS := -Wall -O1 -g\
     -march=armv5te -mtune=arm946e-s -fomit-frame-pointer\
     -ffast-math
 

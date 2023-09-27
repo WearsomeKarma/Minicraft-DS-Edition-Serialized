@@ -1,8 +1,10 @@
 #include "toolitem.h"
 
 #include "../gfx/color.h"
+#include "item.h"
 
 ToolItem::ToolItem(Serializer &serializer)
+    : Item(IK_TOOL)
 {
   serializer.loadFromFile(&random);
   serializer.loadFromFile(&toolItemKind);
@@ -38,6 +40,7 @@ int LEVEL_COLORS[5] = {
 };
 
 ToolItem::ToolItem(ToolDetails *type, int level)
+    : Item(IK_TOOL)
 {
   this->type = type;
   this->level = level;

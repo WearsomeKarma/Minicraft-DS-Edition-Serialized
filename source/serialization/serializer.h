@@ -19,6 +19,7 @@ public:
     EK_DOUBLE_OPEN,
     EK_DOUBLE_CLOSE,
     EK_GENERAL_IO,
+    EK_LEAK,
   };
 private:
   FILE *file = nullptr;
@@ -26,7 +27,24 @@ private:
 public:
   Serializer() {}
 
-  bool open(const std::string &path) 
+  bool openRead(const std::string &path) 
+  {
+    printf("\x1b[10;0HOPEN %s            ", path.c_str());
+    if (file)
+    {
+      errorKind = EK_DOUBLE_OPEN;
+      return false;
+    }
+    file = fopen("minicraft.dat", "r");
+    if (!file)
+    {
+      errorKind = EK_NO_FILE;
+      return false;
+    }
+    return true;
+  }
+
+  bool openWrite(const std::string &path) 
   {
     printf("\x1b[10;0HOPEN %s            ", path.c_str());
     if (file)
@@ -82,67 +100,98 @@ public:
     return true;
   }
   template<typename TPtr>
-  TPtr *loadFromFile()
+  bool loadFromFile_Shared(std::shared_ptr<TPtr> &managed_ptr)
   {
     TPtr *ptr = new TPtr();
-    if (loadFromFile(ptr))
-      return ptr;
-    delete ptr;
-    return NULL;
-  }
-  template<typename TPtr>
-  std::shared_ptr<TPtr> loadFromFile_Shared()
-  {
-    TPtr *ptr = new TPtr();
-    if (loadFromFile(ptr))
-      return std::shared_ptr<TPtr>(ptr);
-    return NULL;
+    if (!loadFromFile(ptr))
+      return false;
+    managed_ptr = std::shared_ptr<TPtr>(ptr);
+    return true;
   }
   template<typename TPtr, typename TContainer>
-  void loadFromFile_EmplaceBack(TContainer &container)
+  bool loadFromFile_EmplaceBack(TContainer &container)
   {
     container.emplace_back();
     TPtr *ptr = &container.back();
-    loadFromFile(ptr);
+    if(loadFromFile(ptr))
+      return true;
+    container.erase(container.end());
+    return false;
   }
   template<typename TPtr, typename TContainer>
-  void loadFromFile_EmplaceBack_Shared(TContainer &container)
+  bool loadFromFile_EmplaceBack_Shared(TContainer &container)
   {
     container.emplace_back();
     std::shared_ptr<TPtr> ptr = container.back();
-    loadFromFile(ptr.get());
+    if(loadFromFile(ptr.get()))
+      return true;
+    container.erase(container.end());
+    return false;
   }
   template<typename TPtr, typename TContainer>
-  void loadFromFile_EmplaceBack_Serialized(TContainer &container)
+  bool loadFromFile_EmplaceBack_Serialized(TContainer &container)
   {
     container.emplace_back(*this);
+    if (errorKind == EK_NO_ERROR)
+      return true;
+    container.erase(container.end());
+    return false;
   }
   // This is given as a courtesy. Be careful with it.
   // Fields must come one after another, and be of the same type.
   template<typename TPtr>
   bool loadFromFile_Fields(TPtr *addr_start, TPtr *addr_end)
   {
-    do
+    // do
+    // {
+    //   if (!loadFromFile<TPtr>(addr_start))
+    //     return false;
+    // } while(addr_start++ <= addr_end);
+    if (!fread(addr_start, sizeof(TPtr), addr_end - addr_start, file))
     {
-      loadFromFile<TPtr>(addr_start);
-    } while(addr_start++ <= addr_end);
-    return getError() == EK_NO_ERROR;
+      errorKind = EK_FAIL_READ;
+      return false;
+    }
+    return true;
   }
   template<typename TPtr>
-  TPtr *loadFromFile_Lookahead()
+  bool loadFromFile_Lookahead(TPtr *&ptr)
   {
+    if (!ptr)
+    {
+      errorKind = EK_LEAK;
+      return false;
+    }
     unsigned int location = ftell(file);
-    TPtr *ptr = new TPtr();
+    ptr = new TPtr();
     if (!ptr)
     {
       errorKind = EK_MEMORY;
-      return NULL;
+      return false;
     }
     if (!fread(ptr, sizeof(TPtr), 1, file))
     {
       errorKind = EK_FAIL_READ;
       free(ptr);
-      return NULL;
+      return false;
+    }
+    fseek(file, location, SEEK_SET);
+    return ptr;
+  }
+  template<typename TPtr>
+  bool loadFromFile_Lookahead_Serialized(TPtr *&ptr)
+  {
+    if (!ptr)
+    {
+      errorKind = EK_LEAK;
+      return false;
+    }
+    unsigned int location = ftell(file);
+    ptr = new TPtr(*this);
+    if (!ptr)
+    {
+      errorKind = EK_MEMORY;
+      return false;
     }
     fseek(file, location, SEEK_SET);
     return ptr;
@@ -153,13 +202,10 @@ public:
     size_t length;
     if (!loadFromFile(&length))
       return false;
-    for (size_t i=0;i<length;i++)
-    {
-      printf("\x1b[11;0HCOLLECTION %ld            ", i);
-      collection.emplace_back();
-      if (!loadFromFile(&collection.back()))
-        return false;
-    }
+    TValue buffer[length];
+    if (!loadFromFile_Fields(buffer, buffer + length))
+      return false;
+    collection.insert(collection.end(), buffer, buffer + length);
     return true;
   }
   template<typename TCollection, typename TValue>
@@ -168,18 +214,25 @@ public:
     size_t length;
     if (!loadFromFile(&length))
       return false;
+    TValue buffer[] = new TValue[length];
+    if (!loadFromFile_Fields(buffer, buffer + length))
+    {
+      delete[] buffer;
+      return false;
+    }
     for (size_t i=0;i<length;i++)
     {
-      printf("\x1b[11;0HCOLLECTION %ld            ", i);
-      collection.emplace_back();
-      if (!loadFromFile(collection.back().get()))
-        return false;
+      // printf("\x1b[11;0HCOLLECTION %ld            ", i);
+      collection.push_back(std::shared_ptr<TValue>(buffer[i]));
     }
     return true;
   }
   template<typename TCollection, typename TValue>
   bool loadFromFile_Collection_Serialized(TCollection &collection)
   {
+    //TODO: make static getSizeInBytes() in TValue
+    //      then make a byte buffer based on that size
+    //      to limit the utilization of IO calls.
     size_t length;
     if (!loadFromFile(&length))
       return false;
@@ -224,24 +277,33 @@ public:
     ptr->serialize(*this);
     return errorKind == EK_NO_ERROR;
   }
+  // This is given as a courtesy. Be careful with it.
+  // Fields must come one after another, and be of the same type.
+  template<typename TPtr>
+  bool saveToFile_Fields(TPtr *addr_start, TPtr *addr_end)
+  {
+    if (!fwrite(addr_start, sizeof(TPtr), addr_end - addr_start, file))
+    {
+      errorKind = EK_FAIL_WRITE;
+      return false;
+    }
+    return true;
+  }
   template<typename TCollection, typename TValue>
   bool saveToFile_Collection(TCollection &collection)
   {
     size_t length = collection.size();
     if (!saveToFile(&length))
       return false;
-    size_t i = 0;
-    for (TValue &entry : collection)
-    {
-      printf("\x1b[11;0HCOLLECTION %ld            ", i++);
-      if (!saveToFile(&entry))
-        return false;
-    }
+    if (!saveToFile_Fields(collection.data(), collection.data() + collection.size()))
+      return false;
     return true;
   }
   template<typename TCollection, typename TValue>
   bool saveToFile_Collection_Serialized(TCollection &collection)
   {
+    //TODO: same thing has the other TODO regarding
+    //      static getSizeInBytes() but here.
     size_t length = collection.size();
     if (!saveToFile(&length))
       return false;
@@ -258,6 +320,7 @@ public:
   template<typename TCollection, typename TValue>
   bool saveToFile_Collection_Shared(TCollection &collection)
   {
+    //TODO: do similar buffering for IO here.
     size_t length = collection.size();
     if (!saveToFile(&length))
       return false;
@@ -273,6 +336,7 @@ public:
   template<typename TCollection, typename TValue>
   bool saveToFile_Collection_Shared_Serialized(TCollection &collection)
   {
+    //TODO: same thing here.
     size_t length = collection.size();
     if (!saveToFile(&length))
       return false;
@@ -284,18 +348,6 @@ public:
       if (errorKind != EK_NO_ERROR)
         return false;
     }
-    return true;
-  }
-  // This is given as a courtesy. Be careful with it.
-  // Fields must come one after another, and be of the same type.
-  template<typename TPtr>
-  bool saveToFile_Fields(TPtr *addr_start, TPtr *addr_end)
-  {
-    do
-    {
-      if (!saveToFile(addr_start))
-        return false;
-    } while(addr_start++ <= addr_end);
     return true;
   }
 };

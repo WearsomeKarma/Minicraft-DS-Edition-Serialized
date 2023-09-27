@@ -26,6 +26,8 @@
 #include "level/tile/oretile.h"
 #include "level/tile/cloudcactustile.h"
 
+#include "exception.h"
+
 // in ms
 static int playtime = 0;
 void incrementTime();
@@ -95,6 +97,7 @@ void initialize()
   initializeSubEngine();
   initializeResources();
   fatInitDefault();
+  Exception::init();
 
     //TODO: remove console
   videoSetModeSub(MODE_0_2D);

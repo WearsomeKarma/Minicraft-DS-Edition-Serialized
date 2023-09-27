@@ -12,9 +12,22 @@ class Entity;
 class Player;
 class ItemEntity;
 
+enum ItemKind
+{
+  IK_UNKNOWN = 0,
+  IK_FURNITURE,
+  IK_POWERGLOVE,
+  IK_RESOURCE,
+  IK_TOOL,
+};
+
 class Item : public ListItem, public ISerializeable
 {
+  enum ItemKind itemKind;
 public:
+  Item(enum ItemKind itemKind) : itemKind(itemKind) {}
+  Item(Serializer &serializer) { serializer.loadFromFile(&itemKind); }
+
   virtual std::string getName() const { return "ERROR"; }
 
   virtual int getColor() const { return 0; }
@@ -35,7 +48,8 @@ public:
 
   virtual bool matches(const Item &item) { return item.getName() == getName(); }
 
-  virtual std::shared_ptr<Item> clone() { return std::make_shared<Item>(); }
+  virtual std::shared_ptr<Item> clone() { return std::make_shared<Item>(itemKind); }
 
-  void serialize(Serializer &serializer) override {}
+  enum ItemKind getKind() { return itemKind; }
+  void serialize(Serializer &serializer) override { serializer.saveToFile(&itemKind); }
 };

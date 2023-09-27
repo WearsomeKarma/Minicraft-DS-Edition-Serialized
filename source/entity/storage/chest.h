@@ -15,5 +15,8 @@ public:
   bool use(Game &game, Level &level, Player &player, int attackDir) override;
   std::shared_ptr<Furniture> clone() override;
 
+  bool hasInventory() override { return true; }
+  std::shared_ptr<Inventory> getInventory() override { return inventory; }
+
   void serialize(Serializer &serializer) override;
 };

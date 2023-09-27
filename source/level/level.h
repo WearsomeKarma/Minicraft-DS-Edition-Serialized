@@ -18,7 +18,8 @@
 class Screen;
 class LightMask;
 
-class Level : public ISerializeable, public IContainerUUID<Entity>
+class Level : public ISerializeable, 
+    public IContainerUUID<std::shared_ptr<Entity>>
 {
 private:
   FactoryUUID_Stack factoryUUID;

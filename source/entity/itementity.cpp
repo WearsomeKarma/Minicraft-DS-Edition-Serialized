@@ -1,5 +1,6 @@
 #include "itementity.h"
 #include "entity.h"
+#include "../item/inventory.h"
 
 ItemEntity::ItemEntity(Serializer &serializer)
 : Entity(EK_ITEM)
@@ -11,7 +12,8 @@ ItemEntity::ItemEntity(Serializer &serializer)
 ItemEntity::ItemEntity(std::shared_ptr<Item> item, int x, int y)
 : Entity(EK_ITEM)
 {
-  this->item = item;
+  inventory = std::make_shared<Inventory>();
+  inventory->add(item);
   xx = this->x = x;
   yy = this->y = y;
   xr = 3;
@@ -72,6 +74,7 @@ void ItemEntity::render(Screen &screen)
     if (time / 6 % 2 == 0)
       return;
   }
+  std::shared_ptr<Item> item = inventory->items[0];
   screen.renderTile(x - 4, y - 4, item->getSprite(), Color::get(-1, 0, 0, 0), 0);
   screen.renderTile(x - 4, y - 4 - (int)(zz), item->getSprite(), item->getColor(), 0);
 }

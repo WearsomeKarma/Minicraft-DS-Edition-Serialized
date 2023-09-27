@@ -22,12 +22,12 @@ public:
 
 class UUID_Field final : public ISerializeable_WithUUID
 {
-  bool isActive = false;
   union
   {
     unsigned int id;
     std::weak_ptr<UUID> uuid_ptr;
   };
+  bool isActive = false;
 
 public:
   UUID_Field();

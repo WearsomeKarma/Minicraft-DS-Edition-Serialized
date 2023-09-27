@@ -19,10 +19,6 @@ public:
   double xa, ya;
   double xx, yy;
 
-  // USED FOR DESERIALIZATION!!! DO NOT USE!!!
-  Projectile() {}
-  // -----------------------------------------
-
   Projectile(Serializer &serializer);
   Projectile(enum ProjectileKind projectileKind) 
       : Particle(PK_PROJECTILE), projectileKind(projectileKind) {}

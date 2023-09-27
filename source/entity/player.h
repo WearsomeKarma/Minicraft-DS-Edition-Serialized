@@ -9,7 +9,7 @@
 class Player : public Mob
 {
 public:
-  Inventory inventory;
+  std::shared_ptr<Inventory> inventory;
   std::shared_ptr<Item> attackItem;
   int stamina = 0;
   int staminaRecharge = 0;
@@ -32,6 +32,9 @@ public:
   int getSelectedItemIndex();
   void setItemHeld(bool status);
   std::shared_ptr<Item> getActiveItem();
+
+  bool hasInventory() override { return true; }
+  std::shared_ptr<Inventory> getInventory() override { return inventory; }
 
   void serialize(Serializer &serializer) override;
 

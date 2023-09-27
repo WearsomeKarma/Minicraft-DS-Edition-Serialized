@@ -8,7 +8,7 @@
 
 std::shared_ptr<Entity> ParticleDeserializer::deserialize(Serializer &serializer)
 {
-  BEGIN_DESERIALIZATION(serializer, Particle)
+  BEGIN_DESERIALIZATION__OF_SERIALIZEABLE(serializer, Particle)
       CASE_DESERIALIZE__AS(PK_SMASH, serializer, SmashParticle, Particle)
       CASE_DESERIALIZE__AS(PK_TEXT, serializer, TextParticle, Particle)
       CASE_DESERIALIZE__WITH(PK_PROJECTILE, 

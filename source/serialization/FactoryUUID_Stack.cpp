@@ -12,7 +12,7 @@ FactoryUUID_Stack::FactoryUUID_Stack()
 FactoryUUID_Stack::FactoryUUID_Stack(Serializer &serializer)
 {
   serializer.loadFromFile_Collection
-      <std::list<unsigned int>, unsigned int>(availableIds);
+      <std::vector<unsigned int>, unsigned int>(availableIds);
 }
 
 void FactoryUUID_Stack::freeUUID(UUID &uuid)
@@ -32,5 +32,5 @@ void FactoryUUID_Stack::assignUUID(ISerializeable_WithUUID &target)
 void FactoryUUID_Stack::serialize(Serializer &serializer)
 {
   serializer.saveToFile_Collection
-      <std::list<unsigned int>, unsigned int>(availableIds);
+      <std::vector<unsigned int>, unsigned int>(availableIds);
 }
