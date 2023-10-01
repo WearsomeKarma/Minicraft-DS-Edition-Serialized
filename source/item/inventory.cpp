@@ -9,6 +9,7 @@ Inventory::Inventory(Serializer &serializer)
   serializer.loadFromFile(&length);
   for(size_t i=0;i<length;i++)
   {
+    printf("\x1b[1;0HINV-deser-item %ld         ", length);
     add(ItemDeserializer::deserialize(serializer));
   }
 }
@@ -120,22 +121,14 @@ int Inventory::count(const Item &item)
   return 0;
 }
 
+void Inventory::initAfterLoad(Game &game)
+{
+  for(auto &item : items)
+    item->initAfterLoad(game);
+}
+
 void Inventory::serialize(Serializer &serializer)
 {
   serializer.saveToFile_Collection_Shared_Serialized
       <std::vector<std::shared_ptr<Item>>, Item>(items);
-}
-
-void Inventory::handleDependentsResolutionOfUUIDs(
-      IContainerUUID<std::shared_ptr<Entity>>& container)
-{
-  for(auto &item : items)
-  {
-    if (auto itemReferencingUUID = 
-            std::dynamic_pointer_cast<IReferencesUUID<std::shared_ptr<Entity>>>
-            (item))
-    {
-      itemReferencingUUID->resolveValueOfUUID(container);
-    }
-  }
 }

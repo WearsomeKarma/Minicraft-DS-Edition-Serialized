@@ -29,10 +29,10 @@ void StorageMenu::tick(Game &game)
     moving = false;
   }
 
-  Inventory &i = window == 1 ? player->inventory : *storageInventory;
-  Inventory &i2 = window == 0 ? player->inventory : *storageInventory;
+  std::shared_ptr<Inventory> i = window == 1 ? player->inventory : storageInventory;
+  std::shared_ptr<Inventory> i2 = window == 0 ? player->inventory : storageInventory;
 
-  int len = i.items.size();
+  int len = i->items.size();
 
   if (selected < 0)
     selected = 0;
@@ -55,7 +55,7 @@ void StorageMenu::tick(Game &game)
 
   if (moving && lastPosition != selected)
   {
-    auto start = i.items.begin();
+    auto start = i->items.begin();
     std::iter_swap(start + lastPosition, start + selected);
   }
 
@@ -73,12 +73,12 @@ void StorageMenu::tick(Game &game)
   }
   else if (game.justTapped(KEY_A) && len > 0)
   {
-    auto item = i.items[selected];
+    auto item = i->items[selected];
 
-    i.removeItem(*item);
-    i2.add(oSelected, item);
+    i->removeItem(*item);
+    i2->add(oSelected, item);
 
-    len = i.items.size();
+    len = i->items.size();
 
     if (selected >= len)
       selected = len - 1;
@@ -96,7 +96,7 @@ void StorageMenu::render(Screen &screen, Screen &bottomScreen)
     screen.setOffset(6 * 8, 0);
 
   renderInventory(screen, 1, 1, title, storageInventory->items, window == 0);
-  renderInventory(screen, 13, 1, "inventory", player->inventory.items, window == 1);
+  renderInventory(screen, 13, 1, "inventory", player->inventory->items, window == 1);
 
   screen.setOffset(0, 0);
 }

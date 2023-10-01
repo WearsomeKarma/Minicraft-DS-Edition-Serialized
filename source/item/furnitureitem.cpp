@@ -2,30 +2,46 @@
 #include "item.h"
 #include <memory>
 #include "../exception.h"
+#include "../serialization/entity/furniture/furnituredeserializer.h"
 
 FurnitureItem::FurnitureItem(Serializer &serializer)
-    : Item(IK_FURNITURE)
+    : Item(serializer)
 {
-  furniture_uuid = UUID_Field(serializer);
   serializer.loadFromFile(&placed);
+  if (placed)
+  {
+    furniture = FurnitureBy_UUID(serializer);
+    return;
+  }
+
+  std::shared_ptr<Furniture> deserialized_furniture =
+      std::static_pointer_cast<Furniture>(FurnitureDeserializer::deserialize(serializer));
+
+  this->furniture = FurnitureBy_UUID(deserialized_furniture);
 }
 
 FurnitureItem::FurnitureItem(std::shared_ptr<Furniture> furniture)
-    : Item(IK_FURNITURE), furniture(furniture), furniture_uuid(((const Furniture&)*furniture).getUUID()) {}
+    : Item(IK_FURNITURE), furniture(furniture) {}
+
+void FurnitureItem::initAfterLoad(Game &game)
+{
+  //TODO: ifndef NDEBUG exception should be raised when return value is false.
+  furniture.trySetActive(game);  
+}
 
 std::string FurnitureItem::getName() const
 {
-  return furniture->name;
+  return furniture.unsafeAsFurniture()->name;
 }
 
 int FurnitureItem::getColor() const
 {
-  return furniture->col;
+  return furniture.unsafeAsFurniture()->col;
 }
 
 int FurnitureItem::getSprite() const
 {
-  return furniture->sprite + 10 * 32;
+  return furniture.unsafeAsFurniture()->sprite + 10 * 32;
 }
 
 void FurnitureItem::renderIcon(Screen &screen, int x, int y)
@@ -36,7 +52,7 @@ void FurnitureItem::renderIcon(Screen &screen, int x, int y)
 void FurnitureItem::renderInventory(Screen &screen, int x, int y)
 {
   screen.renderTile(x, y, getSprite(), getColor(), 0);
-  screen.renderText(furniture->name, x + 8, y, Color::get(-1, 555, 555, 555));
+  screen.renderText(furniture.unsafeAsFurniture()->name, x + 8, y, Color::get(-1, 555, 555, 555));
 }
 
 bool FurnitureItem::canAttack()
@@ -46,11 +62,11 @@ bool FurnitureItem::canAttack()
 
 bool FurnitureItem::interactOn(Tile &tile, Level &level, int xt, int yt, Player &player, int attackDir)
 {
-  if (tile.mayPass(level, xt, yt, *furniture))
+  if (tile.mayPass(level, xt, yt, *furniture.unsafeAsFurniture()))
   {
-    furniture->x = xt * 16 + 8;
-    furniture->y = yt * 16 + 8;
-    level.add(furniture);
+    furniture.unsafeAsFurniture()->x = xt * 16 + 8;
+    furniture.unsafeAsFurniture()->y = yt * 16 + 8;
+    level.add(furniture.unsafeAsFurniture());
     placed = true;
     return true;
   }
@@ -64,34 +80,27 @@ bool FurnitureItem::isDepleted()
 
 bool FurnitureItem::matches(const Item &item)
 {
-  if (!furniture_uuid.getIsActive())
-    return false;
   if (auto furnitureItem = dynamic_cast<const FurnitureItem *>(&item))
   {
-    return furniture_uuid.getID() == furnitureItem->furniture_uuid.getID();
+    return furniture.getID() == furnitureItem->furniture.getID();
   }
   return false;
 }
 
 std::shared_ptr<Item> FurnitureItem::clone()
 {
-  return std::make_shared<FurnitureItem>(furniture->clone());
+  return std::make_shared<FurnitureItem>(furniture.unsafeAsFurniture());
 }
 
 void FurnitureItem::serialize(Serializer &serializer) 
 {
-  furniture_uuid.serialize(serializer);
+  Item::serialize(serializer);
   serializer.saveToFile(&placed);
-}
-
-void FurnitureItem::resolveValueOfUUID(
-        IContainerUUID<std::shared_ptr<Entity>>& container)
-{
-  furniture = std::dynamic_pointer_cast<Furniture>(
-          container.getByUUID(furniture_uuid));
-  if (!furniture)
+  if (placed) 
   {
-    printf("\x1b[11;0HFurnitureItem.resolveValueOfUUID is nullptr");
-    Exception::raise();
+    furniture.serialize(serializer);
+    return;
   }
+
+  furniture.unsafeAsFurniture()->serialize(serializer);
 }

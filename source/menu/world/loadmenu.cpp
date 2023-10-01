@@ -4,7 +4,8 @@
 #include <nds.h>
 #include "../../exception.h"
 
-LoadMenu::LoadMenu()
+LoadMenu::LoadMenu(Game &game)
+    : serializer(game)
 {
   currentStep = 0;
   currentStepName = "Loading Sky";
@@ -44,7 +45,6 @@ void LoadMenu::tick(Game &game)
     currentStepName = "Loading Overworld";
     break;
   case 1:
-    Exception::raise();
     serializer.loadFromFile_EmplaceBack_Serialized<Level>(game.levels);
     if (serializer.hasError())
     {
@@ -102,9 +102,16 @@ void LoadMenu::tick(Game &game)
       game.currentLevel = 4;
     }
 
-    currentStepName = "Done!";
+    currentStepName = "Initalizing Entities...";
     break;
   case 5:
+    for (auto &level : game.levels)
+    {
+      level.initAfterLoad(game);
+    }
+    currentStepName = "Done!";
+    break;
+  case 6:
     game.frameSkipEnabled = true;
     game.setMenu(std::make_unique<InGameMenu>(game.player, game.levels[game.currentLevel].map));
 

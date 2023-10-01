@@ -15,7 +15,7 @@ void Spark::tick(Game &game, Level &level, std::shared_ptr<Entity> self)
   if (removed) return;
 
   auto owner = 
-      std::dynamic_pointer_cast<Mob>(owner_refBy_UUID.get((IContainerUUID<Entity>&)level).lock());
+      std::dynamic_pointer_cast<Mob>(owner_refBy_UUID.unsafeGet().lock());
 
   auto toHit = level.getEntities(x, y, x, y);
 

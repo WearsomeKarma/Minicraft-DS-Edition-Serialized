@@ -2,10 +2,11 @@
 
 #include <memory>
 
-class UUID;
-class UUID_Field;
+class I_UUID_Field;
+class UUID_OwnedField;
 class Serializer;
 class IFactoryUUID;
+class UUID;
 
 class ISerializeable
 {
@@ -16,37 +17,13 @@ public:
 class IHasUUID
 {
 public:
-  virtual const UUID_Field &getUUID() const = 0;
+  virtual const I_UUID_Field &getUUID() const = 0;
 };
 
 class IOwnsUUID : public IHasUUID
 {
 protected:
   friend class IFactoryUUID;
-  // return true if you actually keep the uuid given to you.
-  virtual UUID_Field &getUUID() = 0; 
+  friend class Game;
+  virtual bool recieveUUID(UUID_OwnedField &uuid) = 0; 
 };
-
-template<typename TValue>
-class IContainerUUID;
-
-template<typename TValue>
-class IReferencesUUID : public IHasUUID
-{
-protected:
-  friend class IContainerUUID<TValue>;
-  virtual void resolveValueOfUUID(
-          IContainerUUID<TValue>& container) = 0;
-};
-
-template<typename TValue>
-class IDependentsReferenceUUIDs
-{
-protected:
-  friend class IContainerUUID<TValue>;
-  virtual void handleDependentsResolutionOfUUIDs(
-          IContainerUUID<TValue>& container) = 0;
-};
-
-class ISerializeable_WithUUID : public ISerializeable, public IOwnsUUID
-{};

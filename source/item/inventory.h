@@ -7,14 +7,17 @@
 #include "resourceitem.h"
 #include "../serialization/serializable.h"
 
-class Inventory : public ISerializeable,
-    public IDependentsReferenceUUIDs<std::shared_ptr<Entity>>
+class Game;
+
+class Inventory : public ISerializeable
 {
 public:
   std::vector<std::shared_ptr<Item>> items;
 
   Inventory() {}
   Inventory(Serializer &serializer);
+
+  void initAfterLoad(Game &game);
 
   void add(std::shared_ptr<Item> item);
   void add(int slot, std::shared_ptr<Item> item);
@@ -27,7 +30,4 @@ public:
 
 private:
   std::shared_ptr<ResourceItem> findResource(Resource::ID resourceId);
-protected:
-  void handleDependentsResolutionOfUUIDs(
-          IContainerUUID<std::shared_ptr<Entity>>& container) override;
 };

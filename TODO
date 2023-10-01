@@ -1,0 +1,3 @@
+- crash when saving items on ground
+- particles not appearing
+- crash when furniture in inventory (UUID is fine, its serializing a string length of 0)

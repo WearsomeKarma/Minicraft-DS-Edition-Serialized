@@ -5,8 +5,9 @@ TextParticle::TextParticle(Serializer &serializer)
 {
   size_t length;
   serializer.loadFromFile(&length);
+  if (length == 0) return;
   char *string = new char[length];
-  serializer.loadFromFile_Fields(string, string + (length - 1));
+  serializer.loadFromFile_Fields(string, string + length);
   msg = std::string(string, length);
   delete[] string;
   serializer.loadFromFile_Fields(&xa, &zz);
@@ -51,9 +52,11 @@ void TextParticle::render(Screen &screen)
 
 void TextParticle::serialize(Serializer &serializer)
 {
-  size_t length;
+  Particle::serialize(serializer);
+  size_t length = msg.length();
   serializer.saveToFile(&length);
+  if (length == 0) return;
   const char *string = msg.c_str();
-  serializer.saveToFile_Fields(string, string + (length - 1));
+  serializer.saveToFile_Fields(string, string + length);
   serializer.saveToFile_Fields(&xa, &zz);
 }

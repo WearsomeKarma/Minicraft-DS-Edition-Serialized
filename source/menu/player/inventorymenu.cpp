@@ -20,7 +20,7 @@ void InventoryMenu::tick(Game &game)
   if (game.justTapped(KEY_DOWN))
     selected++;
 
-  int len = player->inventory.items.size();
+  int len = player->inventory->items.size();
 
   if (len == 0)
     selected = 0;
@@ -31,7 +31,7 @@ void InventoryMenu::tick(Game &game)
 
   if (moving && lastPosition != selected)
   {
-    auto start = player->inventory.items.begin();
+    auto start = player->inventory->items.begin();
     std::iter_swap(start + lastPosition, start + selected);
   }
 
@@ -63,5 +63,5 @@ void InventoryMenu::tick(Game &game)
 void InventoryMenu::render(Screen &screen, Screen &bottomScreen)
 {
   screen.renderFrame("inventory", 1, 1, 12, 11);
-  renderItemList(screen, 1, 1, 12, 11, player->inventory.items, selected, blinkTimer < 15);
+  renderItemList(screen, 1, 1, 12, 11, player->inventory->items, selected, blinkTimer < 15);
 }

@@ -1,10 +1,13 @@
 #pragma once
 
+#include "FactoryUUID.h"
 #include "serializable.h"
 #include <memory>
 #include <stdio.h>
 #include <vector>
 #include <string>
+
+class Game;
 
 class Serializer
 {
@@ -22,10 +25,14 @@ public:
     EK_LEAK,
   };
 private:
+  friend class UUID;
+  friend class Level;
+  Game &game;
+private:
   FILE *file = nullptr;
   enum ErrorKind errorKind = EK_NO_ERROR; 
 public:
-  Serializer() {}
+  Serializer(Game &game) : game(game) {}
 
   bool openRead(const std::string &path) 
   {
@@ -63,7 +70,7 @@ public:
 
   bool close()
   {
-    printf("\x1b[10;0HCLOSE %ld          ", ftell(file));
+    printf("\x1b[10;0HCLOSE %08lx          ", ftell(file));
     if(!file)
     {
       errorKind = EK_DOUBLE_CLOSE;
@@ -77,6 +84,8 @@ public:
     return true;
   }
 
+  ~Serializer() { close(); }
+
   bool isClosed() { return file == nullptr; }
   size_t getPositionInFile() { return ftell(file); }
 
@@ -86,7 +95,7 @@ public:
   template<typename TPtr>
   bool loadFromFile(TPtr *ptr)
   {
-    printf("\x1b[10;0HLOAD %ld            ", ftell(file));
+    printf("\x1b[10;0HLOAD %08lx            ", ftell(file));
     if (!ptr)
     {
       errorKind = EK_MEMORY;
@@ -105,6 +114,23 @@ public:
     TPtr *ptr = new TPtr();
     if (!loadFromFile(ptr))
       return false;
+    managed_ptr = std::shared_ptr<TPtr>(ptr);
+    return true;
+  }
+  template<typename TPtr>
+  bool loadFromFile_Shared_Serialized(std::shared_ptr<TPtr> &managed_ptr)
+  {
+    TPtr *ptr = new TPtr(*this);
+    if (!ptr)
+    {
+      errorKind = EK_MEMORY;
+      return false;
+    }
+    if (errorKind != EK_NO_ERROR)
+    {
+      delete ptr;
+      return false;
+    }
     managed_ptr = std::shared_ptr<TPtr>(ptr);
     return true;
   }
@@ -157,7 +183,7 @@ public:
   template<typename TPtr>
   bool loadFromFile_Lookahead(TPtr *&ptr)
   {
-    if (!ptr)
+    if (ptr)
     {
       errorKind = EK_LEAK;
       return false;
@@ -181,7 +207,7 @@ public:
   template<typename TPtr>
   bool loadFromFile_Lookahead_Serialized(TPtr *&ptr)
   {
-    if (!ptr)
+    if (ptr)
     {
       errorKind = EK_LEAK;
       return false;
@@ -238,7 +264,8 @@ public:
       return false;
     for (size_t i=0;i<length;i++)
     {
-      printf("\x1b[11;0HCOLLECTION %ld            ", i);
+      printf("\x1b[11;0HCOLLECTION %ld / %ld           ", i, length);
+      printf("\x1b[1;0HLOAD-collection-ser       ");
       collection.emplace_back(*this);
       if (errorKind != EK_NO_ERROR)
         return false;
@@ -253,7 +280,8 @@ public:
       return false;
     for (size_t i=0;i<length;i++)
     {
-      printf("\x1b[11;0HCOLLECTION %ld            ", i);
+      printf("\x1b[11;0HCOLLECTION %ld / %ld           ", i, length);
+      printf("\x1b[1;0HLOAD-collection-shr-ser       ");
       collection.push_back(std::make_shared<TValue>(*this));
       if (errorKind != EK_NO_ERROR)
         return false;
@@ -343,7 +371,7 @@ public:
     size_t i = 0;
     for (std::shared_ptr<TValue> &entry : collection)
     {
-      printf("\x1b[11;0HCOLLECTION %ld            ", i++);
+      printf("\x1b[11;0HCOLLECTION %ld %08lx           ", i++, ftell(file));
       entry->serialize(*this);
       if (errorKind != EK_NO_ERROR)
         return false;

@@ -4,7 +4,7 @@
 #include "item.h"
 
 ToolItem::ToolItem(Serializer &serializer)
-    : Item(IK_TOOL)
+    : Item(serializer)
 {
   serializer.loadFromFile(&random);
   serializer.loadFromFile(&toolItemKind);
@@ -110,6 +110,7 @@ std::shared_ptr<Item> ToolItem::clone()
 
 void ToolItem::serialize(Serializer &serializer)
 {
+  Item::serialize(serializer);
   serializer.saveToFile(&random);
   serializer.saveToFile(&toolItemKind);
 }

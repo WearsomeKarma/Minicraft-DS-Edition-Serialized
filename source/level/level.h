@@ -18,11 +18,18 @@
 class Screen;
 class LightMask;
 
-class Level : public ISerializeable, 
-    public IContainerUUID<std::shared_ptr<Entity>>
+class Level : public ISerializeable,
+    public IContainerUUID<std::shared_ptr<Entity>>,
+    public IContainerUUID<std::weak_ptr<Entity>>
 {
 private:
-  FactoryUUID_Stack factoryUUID;
+  // Justification for no smartptr: 
+  //   Game outlives all objects.
+  //   Also, I don't want to retain a reference
+  //   and thereby make Level a non-trivial type
+  //   to construct.
+  Game *game;
+
   Random random;
   char depth;
 
@@ -49,10 +56,15 @@ public:
 
   // For Serialization - DO NOT USE.
   Level(Serializer &serializer);
+  // -------------------------------
 
   // utilize these
-  Level(int w, int h, char depth);
-  Level(int w, int h, char depth, Level &parentLevel);
+  Level(Game &game, int w, int h, char depth);
+  Level(Game &game, int w, int h, char depth, Level &parentLevel);
+
+  // For Deserialization - DO NOT USE.
+  void initAfterLoad(Game &game);
+  // ---------------------------------
 
   void tick(Game &game);
   void render(Screen &screen, LightMask &LightMask, Player &player);
@@ -65,8 +77,10 @@ public:
   void trySpawn(int count);
   char getDepth() { return depth; } 
 
+  bool tryGetValue_ByUUID(I_UUID_Field &uuid, std::shared_ptr<Entity> &value) override;
+  bool tryGetValue_ByUUID(I_UUID_Field &uuid, std::weak_ptr<Entity> &value) override;
+
   std::vector<std::shared_ptr<Entity>> getEntities(int x0, int y0, int x1, int y1);
 
-  std::shared_ptr<Entity> getByUUID(UUID_Field &uuid) override;
   void serialize(Serializer &serializer) override;
 };

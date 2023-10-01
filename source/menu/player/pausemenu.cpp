@@ -4,7 +4,8 @@
 
 std::vector<std::string> optionsPause = {"Resume", "Save", "Quit"};
 
-PauseMenu::PauseMenu()
+PauseMenu::PauseMenu(Game &game)
+    : serializer(game)
 {
   saveStepName = "PAUSED";
 }
@@ -137,7 +138,7 @@ void PauseMenu::render(Screen &screen, Screen &bottomScreen)
 
   screen.renderTextCentered(saveStepName, screen.w / 2, 6 * 8, optionColor);
 
-  for (int i = 0; i < optionsPause.size(); i++)
+  for (size_t i = 0; i < optionsPause.size(); i++)
   {
     auto msg = optionsPause[i];
 

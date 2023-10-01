@@ -14,8 +14,9 @@ Mob::Mob(enum MobKind mobKind)
 }
 
 Mob::Mob(Serializer &serializer)
-: Entity(EK_MOB)
+: Entity(serializer)
 {
+  serializer.loadFromFile(&mobKind);
   serializer.loadFromFile_Fields(&walkDist, &dir);
 }
 
@@ -176,5 +177,7 @@ bool Mob::findStartPos(Level &level)
 
 void Mob::serialize(Serializer &serializer)
 {
+  Entity::serialize(serializer);
+  serializer.saveToFile(&mobKind);
   serializer.saveToFile_Fields(&walkDist, &dir);
 }

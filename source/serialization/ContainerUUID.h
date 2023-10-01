@@ -2,11 +2,11 @@
 
 #include <memory>
 #include "UUID.h"
+#include "serializable.h"
 
 template<typename TValue>
 class IContainerUUID
 {
 public:
-  virtual bool assignUUID(TValue &target) { return false; }
-  virtual TValue getByUUID(UUID_Field &uuid) = 0;
+  virtual bool tryGetValue_ByUUID(I_UUID_Field &uuid, TValue &value) = 0;
 };

@@ -20,8 +20,10 @@ protected:
 public:
 
   Particle(Serializer &serializer);
-  Particle(enum ParticleKind particleKind) : Entity(EK_PARTICLE), particleKind(particleKind) {}
-  Particle(enum ParticleKind particleKind, int x, int y, int duration) : Entity(EK_PARTICLE, x, y), particleKind(particleKind) {}
+  Particle(enum ParticleKind particleKind) : Entity(EK_PARTICLE), particleKind(particleKind), duration(-1) {}
+  Particle(enum ParticleKind particleKind, int x, int y, int duration) : Entity(EK_PARTICLE, x, y), particleKind(particleKind), duration(duration) {}
+
+  virtual ~Particle() {}
 
   void tick(Game &game, Level &level, std::shared_ptr<Entity> self) override;
 

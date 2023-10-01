@@ -20,16 +20,16 @@ Player::Player()
   stamina = maxStamina;
 
   inventory = std::make_unique<Inventory>();
-  inventory.add(std::make_shared<FurnitureItem>(std::make_shared<Workbench>()));
-  inventory.add(std::make_shared<PowerGloveItem>());
+  inventory->add(std::make_shared<FurnitureItem>(std::make_shared<Workbench>()));
+  inventory->add(std::make_shared<PowerGloveItem>());
 }
 
 Player::Player(Serializer &serializer) 
-: Mob(MK_PLAYER)
+: Mob(serializer)
 {
-  inventory = std::make_shared<Inventory>(serializer);
   serializer.loadFromFile_Fields(&stamina, &selectedItemIndex);
   serializer.loadFromFile_Fields(&swimming, &itemHeld);
+  inventory = std::make_shared<Inventory>(serializer);
 }
 
 void Player::tick(Game &game, Level &level, std::shared_ptr<Entity> self)
@@ -129,7 +129,7 @@ void Player::tick(Game &game, Level &level, std::shared_ptr<Entity> self)
     setItemHeld(false);
 
   if (game.justTapped(KEY_START))
-    game.enterMenu(std::make_unique<PauseMenu>());
+    game.enterMenu(std::make_unique<PauseMenu>(game));
 
   updateInventory(game);
 
@@ -200,7 +200,7 @@ void Player::attack(Level &level)
       }
       if (attackItem->isDepleted())
       {
-        inventory.removeItem(*attackItem);
+        inventory->removeItem(*attackItem);
         itemHeld = false;
         attackItem = NULL;
       }
@@ -424,16 +424,17 @@ void Player::render(Screen &screen)
   if (furnitureItem)
   {
     auto furniture = furnitureItem->furniture;
-    furniture->x = x;
-    furniture->y = yo;
-    furniture->render(screen);
+    furniture.unsafeAsFurniture()->x = x;
+    furniture.unsafeAsFurniture()->y = yo;
+    furniture.unsafeAsFurniture()->render(screen);
   }
 }
 
 void Player::touchItem(ItemEntity &itemEntity)
 {
   itemEntity.take(*this);
-  inventory.add(itemEntity.item);
+  for (auto &item : itemEntity.getInventory()->items)
+    inventory->add(item);
 }
 
 bool Player::canSwim()
@@ -518,7 +519,7 @@ int Player::getLightRadius()
   {
     if (auto furnitureItem = std::dynamic_pointer_cast<FurnitureItem>(activeItem))
     {
-      int rr = furnitureItem->furniture->getLightRadius();
+      int rr = furnitureItem->furniture.unsafeAsFurniture()->getLightRadius();
       if (rr > r)
         r = rr;
     }
@@ -528,7 +529,7 @@ int Player::getLightRadius()
 
 void Player::setSelectedItemIndex(int index)
 {
-  int itemCount = inventory.items.size();
+  int itemCount = inventory->items.size();
 
   if (index > itemCount - 1)
     index = itemCount - 1;
@@ -550,9 +551,9 @@ void Player::setItemHeld(bool status)
 
 std::shared_ptr<Item> Player::getActiveItem()
 {
-  if (!itemHeld || selectedItemIndex >= (int)inventory.items.size())
+  if (!itemHeld || selectedItemIndex >= (int)inventory->items.size())
     return NULL;
-  return inventory.items[selectedItemIndex];
+  return inventory->items[selectedItemIndex];
 }
 
 void Player::touchedBy(Level &level, Entity &entity)
@@ -591,7 +592,8 @@ void Player::die(Game &game, Level &level)
 
 void Player::serialize(Serializer &serializer) 
 {
-  inventory.serialize(serializer);
+  Mob::serialize(serializer);
   serializer.saveToFile_Fields(&stamina, &selectedItemIndex);
   serializer.saveToFile_Fields(&swimming, &itemHeld);
+  inventory->serialize(serializer);
 }

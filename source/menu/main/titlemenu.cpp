@@ -14,15 +14,18 @@ std::vector<std::string> options = {"Start game", "Load game", "How to play", "A
 
 void TitleMenu::tick(Game &game)
 {
+  size_t optionCount = options.size();
+
   if (game.justTapped(KEY_UP))
-    selected--;
+  {
+    if (selected == 0)
+      selected = optionCount - 1;
+    else
+      selected--;
+  }
   if (game.justTapped(KEY_DOWN))
     selected++;
 
-  int optionCount = options.size();
-
-  if (selected < 0)
-    selected = optionCount - 1;
   if (selected >= optionCount)
     selected = 0;
 
@@ -36,7 +39,7 @@ void TitleMenu::tick(Game &game)
     }
     if (selected == 1)
     {
-      game.enterMenu(std::make_unique<LoadMenu>());
+      game.enterMenu(std::make_unique<LoadMenu>(game));
     }
     if (selected == 2)
     {
@@ -78,7 +81,7 @@ void TitleMenu::render(Screen &screen, Screen &bottomScreen)
   int optionColor = Color::get(0, 222, 222, 222);
   int highlightColor = Color::get(0, 555, 555, 555);
 
-  for (int i = 0; i < options.size(); i++)
+  for (size_t i = 0; i < options.size(); i++)
   {
     auto msg = options[i];
 

@@ -5,7 +5,7 @@
 class TitleMenu : public Menu
 {
 private:
-  int selected = 0;
+  size_t selected = 0;
   bool clearedSubScreen = false;
 
 public:

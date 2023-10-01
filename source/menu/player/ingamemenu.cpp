@@ -51,7 +51,7 @@ void InGameMenu::renderHud(Screen &screen)
 
 void InGameMenu::renderInventory(Screen &bottomScreen)
 {
-  auto &items = player->inventory.items;
+  auto &items = player->inventory->items;
   auto activeItem = player->getActiveItem();
 
   int inventoryY = 8;

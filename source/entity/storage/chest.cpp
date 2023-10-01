@@ -3,7 +3,7 @@
 #include "../../menu/furniture/storagemenu.h"
 
 Chest::Chest(Serializer &serializer) 
-: Furniture(FK_CHEST)
+: Furniture(serializer)
 {
   inventory = std::make_shared<Inventory>(serializer);
 }
@@ -29,6 +29,7 @@ std::shared_ptr<Furniture> Chest::clone()
 
 void Chest::serialize(Serializer &serializer) 
 {
+  Furniture::serialize(serializer);
   inventory->serialize(serializer);
 }
 

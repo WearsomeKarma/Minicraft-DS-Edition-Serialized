@@ -86,11 +86,11 @@ void CraftingMenu::updateAmounts(Player &player)
 
   auto recipe = recipes[selected];
 
-  storedAmount = player.inventory.count(*recipe->result);
+  storedAmount = player.inventory->count(*recipe->result);
 
   for (auto &requirement : recipe->requirements)
   {
-    storedRequiredAmounts.push_back(player.inventory.count(requirement));
+    storedRequiredAmounts.push_back(player.inventory->count(requirement));
   }
 }
 

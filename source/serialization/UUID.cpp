@@ -1,63 +1,70 @@
 #include "UUID.h"
 #include "serializer.h"
+#include "../game.h"
 
-UUID_Field::UUID_Field() 
-: uuid_ptr(std::weak_ptr<UUID>()) {}
-
-UUID_Field::UUID_Field(unsigned int id) 
-: id(id) {}
-
-UUID_Field::UUID_Field(std::weak_ptr<UUID> uuid_ptr) 
-: uuid_ptr(uuid_ptr), isActive(true) {}
-
-UUID_Field::UUID_Field(Serializer &serializer)
-: id(0)
+UUID::UUID(Serializer &serializer)
+    : source(serializer.game.factoryUUID)
 {
   serializer.loadFromFile(&id);
 }
 
-UUID_Field::UUID_Field(const UUID_Field &field)
+void UUID::serialize(Serializer &serializer)
 {
-  isActive = field.isActive;
-  if (isActive)
-    uuid_ptr = field.uuid_ptr;
-  else
-    id = field.id;
+serializer.saveToFile(&id);
 }
 
-UUID_Field::UUID_Field(UUID_Field &field)
-: UUID_Field((const UUID_Field&)field)
-{}
-
-UUID_Field& UUID_Field::operator=(UUID_Field field)
+UUID::~UUID()
 {
-  if (this == &field) return *this;
-  isActive = field.isActive;
-  if (isActive)
-    uuid_ptr = field.uuid_ptr;
-  else
-    id = field.id;
-  return *this;
+  source.freeUUID(*this);
 }
 
-unsigned int UUID_Field::getID() const
+UUID_ReferenceField::UUID_ReferenceField(Serializer &serializer)
+{
+  serializer.loadFromFile(&id);
+}
+
+void UUID_ReferenceField::serialize(Serializer &serializer)
+{
+  serializer.saveToFile(&id);
+}
+
+UUID_OwnedField::UUID_OwnedField(Serializer &serializer)
+{
+  serializer.loadFromFile(&isActive);
+  if (!isActive)
+  {
+    unsigned int id = 0;
+    serializer.loadFromFile(&id);
+    *this = UUID_OwnedField(id);
+    return;
+  }
+  *this = UUID_OwnedField(std::make_shared<UUID>(serializer));
+}
+
+unsigned int UUID_OwnedField::getID() const 
 {
   return isActive
-      ? uuid_ptr.lock()->getID()
+      ? uuid_ptr->getID()
       : id
       ;
 }
 
-bool UUID_Field::getPtr(std::weak_ptr<UUID>& uuid_ptr)
+bool UUID_OwnedField::getPtr(std::shared_ptr<UUID>& uuid_ptr)
 {
   if (!isActive)
     return false;
-  uuid_ptr = uuid_ptr;
+  this->uuid_ptr = uuid_ptr;
   return true;
 }
 
-void UUID_Field::serialize(Serializer &serializer)
+void UUID_OwnedField::serialize(Serializer &serializer)
 {
-  unsigned int id = getID();
-  serializer.saveToFile(&id);
+  serializer.saveToFile(&isActive);
+  if (isActive)
+  {
+    unsigned int id = uuid_ptr->getID();
+    serializer.saveToFile(&id);
+  }
+  else
+    serializer.saveToFile(&this->id);
 }

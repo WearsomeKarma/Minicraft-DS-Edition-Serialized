@@ -1,0 +1,24 @@
+#include <nds.h>
+./source/level/tile/tile.cpp
+#include <nds.h>
+./source/entity/player.cpp
+#include <nds.h>
+#include <nds/arm9/videoGL.h>
+./source/gfx/texture.cpp
+#include <nds.h>
+./source/gfx/softwarescreen.cpp
+#include <nds.h>
+./source/gfx/lightmask.cpp
+#include <nds.h>
+#include <nds/arm9/background.h>
+./source/main.cpp
+#include <nds.h>
+./source/exception.cpp
+#include <nds.h>
+./source/menu/world/loadmenu.cpp
+#include <nds.h>
+./source/menu/main/aboutmenu.cpp
+#include <nds.h>
+./source/menu/main/instructionsmenu.cpp
+#include <nds.h>
+./source/menu/main/titlemenu.cpp

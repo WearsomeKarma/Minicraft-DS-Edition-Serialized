@@ -7,6 +7,7 @@
 
 class Screen;
 class Tile;
+class Game;
 class Level;
 class Entity;
 class Player;
@@ -15,10 +16,10 @@ class ItemEntity;
 enum ItemKind
 {
   IK_UNKNOWN = 0,
-  IK_FURNITURE,
-  IK_POWERGLOVE,
-  IK_RESOURCE,
-  IK_TOOL,
+  IK_FURNITURE = 0xddd1,
+  IK_POWERGLOVE = 0xddd2,
+  IK_RESOURCE = 0xddd3,
+  IK_TOOL = 0xddd4,
 };
 
 class Item : public ListItem, public ISerializeable
@@ -27,6 +28,8 @@ class Item : public ListItem, public ISerializeable
 public:
   Item(enum ItemKind itemKind) : itemKind(itemKind) {}
   Item(Serializer &serializer) { serializer.loadFromFile(&itemKind); }
+
+  virtual void initAfterLoad(Game &game) {}
 
   virtual std::string getName() const { return "ERROR"; }
 

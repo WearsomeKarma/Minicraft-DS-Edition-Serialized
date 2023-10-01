@@ -7,17 +7,26 @@
 #include "../item/powergloveitem.h"
 
 Furniture::Furniture(Serializer &serializer)
-: Entity(EK_FURNITURE)
+: Entity(serializer)
 {
+  printf("\x1b[4;0HUTIL-item-deser 1A           "); \
+  serializer.loadFromFile(&furnitureKind);
+  printf("\x1b[4;0HUTIL-item-deser 1C           "); \
   serializer.loadFromFile(&col);
+  printf("\x1b[4;0HUTIL-item-deser 1D           "); \
   serializer.loadFromFile(&sprite);
+  printf("\x1b[4;0HUTIL-item-deser 1E           "); \
 
   size_t length;
   serializer.loadFromFile(&length);
+  if (length == 0) return;
+  printf("\x1b[4;0HUTIL-item-deser 1F %ld          ", serializer.getPositionInFile()); \
   char char_name[length];
-  serializer.saveToFile_Fields(&char_name[0], &char_name[length-1]);
+  serializer.loadFromFile_Fields(&char_name[0], &char_name[length-1]);
+  printf("\x1b[4;0HUTIL-item-deser 1G           "); \
 
   name.assign(&char_name[0], length);
+  printf("\x1b[4;0HUTIL-item-deser 1H           "); \
 }
 
 Furniture::Furniture(enum FurnitureKind furnitureKind, std::string name)
@@ -46,7 +55,7 @@ void Furniture::tick(Game &game, Level &level, std::shared_ptr<Entity> self)
   {
     remove();
 
-    game.player->inventory.add(
+    game.player->inventory->add(
         game.player->getSelectedItemIndex(),
         std::make_shared<FurnitureItem>(std::static_pointer_cast<Furniture>(self)));
 
@@ -97,12 +106,15 @@ std::shared_ptr<Furniture> Furniture::clone()
 
 void Furniture::serialize(Serializer &serializer)
 {
+  Entity::serialize(serializer);
+  serializer.saveToFile(&furnitureKind);
   serializer.saveToFile(&col);
   serializer.saveToFile(&sprite);
 
   size_t length = name.length();
+  serializer.saveToFile(&length);
+  if (length == 0) return;
   char char_name[length];
 
-  serializer.saveToFile(&length);
   serializer.saveToFile_Fields(&char_name[0], &char_name[length-1]);
 }

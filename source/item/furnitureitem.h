@@ -2,18 +2,18 @@
 
 #include "item.h"
 #include "../entity/furniture.h"
+#include "../entity/FurnitureBy_UUID.h"
 
-class FurnitureItem : public Item, 
-    public IReferencesUUID<std::shared_ptr<Entity>>
+class FurnitureItem : public Item
 {
 public:
-  UUID_Field furniture_uuid;
-  std::shared_ptr<Furniture> furniture;
+  FurnitureBy_UUID furniture;
   bool placed = false;
 
   FurnitureItem(Serializer &serializer);
   FurnitureItem(std::shared_ptr<Furniture> furniture);
 
+  void initAfterLoad(Game &game) override;
   std::string getName() const override;
   int getColor() const override;
   int getSprite() const override;
@@ -25,8 +25,5 @@ public:
   bool matches(const Item &item) override;
   std::shared_ptr<Item> clone() override;
 
-  const UUID_Field &getUUID() const override { return furniture_uuid; }
   void serialize(Serializer &serializer) override;
-protected:
-  void resolveValueOfUUID(IContainerUUID<std::shared_ptr<Entity>>& contianer) override;
 };

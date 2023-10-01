@@ -5,10 +5,10 @@
 enum MobKind
 {
   MK_UNKNOWN = 0,
-  MK_AIRWIZARD,
-  MK_SLIME,
-  MK_ZOMBIE,
-  MK_PLAYER,
+  MK_AIRWIZARD = 0xbbb1,
+  MK_SLIME = 0xbbb2,
+  MK_ZOMBIE = 0xbbb3,
+  MK_PLAYER = 0xbbb4,
 };
 
 class Mob : public Entity
@@ -42,6 +42,8 @@ public:
 
   Mob(enum MobKind mobKind);
   Mob(Serializer &serializer);
+
+  virtual ~Mob() {}
 
   void tick(Game &game, Level &level, std::shared_ptr<Entity> self) override;
   bool move(Level &, int xa, int ya) override;

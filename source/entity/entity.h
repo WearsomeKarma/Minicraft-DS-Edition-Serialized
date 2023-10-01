@@ -20,15 +20,15 @@ class Inventory;
 enum EntityKind
 {
   EK_UNKNOWN = 0,
-  EK_FURNITURE,
-  EK_MOB,
-  EK_PARTICLE,
-  EK_ITEM
+  EK_FURNITURE = 0xeee1,
+  EK_MOB = 0xeee2,
+  EK_PARTICLE = 0xeee3,
+  EK_ITEM = 0xeee4
 };
 
-class Entity : public ISerializeable_WithUUID
+class Entity : public ISerializeable, public IOwnsUUID
 {
-  UUID_Field uuid;
+  UUID_OwnedField uuid;
   enum EntityKind entityKind;
 protected:
   static Random random;
@@ -46,9 +46,13 @@ public:
     : entityKind(entityKind), x(x), y(y) {}
   Entity(Serializer &serializer);
 
+  virtual ~Entity() {}
+
   bool interact(Player &player, Item &item, int attackDir);
   void remove();
   bool intersects(int x0, int y0, int x1, int y1);
+
+  virtual void initAfterLoad(Game &game);
 
   virtual void tick(Game &game, Level &level, std::shared_ptr<Entity> self) {}
   virtual void render(Screen &screen) {}
@@ -69,10 +73,9 @@ public:
 
   void serialize(Serializer &serializer) override;
 
-  const UUID_Field &getUUID() const override 
+  const I_UUID_Field &getUUID() const override 
   { return uuid; }
 
 protected:
-  UUID_Field &getUUID() override 
-  { return uuid; }
+  bool recieveUUID(UUID_OwnedField &uuid) override;
 };

@@ -12,10 +12,16 @@ class IFactoryUUID
 protected:
   friend class UUID;
   virtual void freeUUID(UUID &uuid) = 0;
-  std::shared_ptr<UUID> makeUUID(unsigned int id) 
-  { return std::shared_ptr<UUID>(new UUID(id)); }
-  void performAssignmentOfUUID(ISerializeable_WithUUID &target, std::weak_ptr<UUID> uuid)
-  { target.getUUID() = UUID_Field(uuid); }
+// protected:
 public:
-  virtual void assignUUID(ISerializeable_WithUUID &target) = 0;
+  std::shared_ptr<UUID> makeUUID(unsigned int id) 
+  { return std::shared_ptr<UUID>(new UUID(*this, id)); }
+  void performAssignmentOfUUID(
+          IOwnsUUID &target, std::shared_ptr<UUID> uuid)
+  { 
+    UUID_OwnedField owned_uuid = UUID_OwnedField(uuid);
+    target.recieveUUID(owned_uuid); 
+  }
+public:
+  virtual void assignUUID(IOwnsUUID &target) = 0;
 };

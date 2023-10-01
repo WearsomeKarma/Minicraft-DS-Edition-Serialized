@@ -76,6 +76,7 @@ std::shared_ptr<Item> ResourceItem::clone()
 
 void ResourceItem::serialize(Serializer &serializer)
 {
+  Item::serialize(serializer);
   serializer.saveToFile(&resourceId);
   serializer.saveToFile(&count);
 }

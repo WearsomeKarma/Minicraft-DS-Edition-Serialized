@@ -20,7 +20,7 @@ void FactoryUUID_Stack::freeUUID(UUID &uuid)
   availableIds.emplace_back(uuid.getID());
 }
 
-void FactoryUUID_Stack::assignUUID(ISerializeable_WithUUID &target)
+void FactoryUUID_Stack::assignUUID(IOwnsUUID &target)
 {
   unsigned int id = availableIds.back();
   availableIds.erase(availableIds.end());

@@ -11,7 +11,7 @@ private:
   Serializer serializer;
 
 public:
-  LoadMenu();
+  LoadMenu(Game &game);
 
   void tick(Game &game) override;
   void render(Screen &screen, Screen &bottomScreen) override;

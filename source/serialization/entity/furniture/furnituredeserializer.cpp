@@ -11,6 +11,7 @@
 std::shared_ptr<Entity> FurnitureDeserializer::deserialize(
         Serializer &serializer)
 {
+  printf("\x1b[3;0HUTIL-ent-fur-deser            ");
   BEGIN_DESERIALIZATION__OF_SERIALIZEABLE(serializer, Furniture)
     CASE_DESERIALIZE__WITH(FK_UNKNOWN, nullptr)
     CASE_DESERIALIZE__AS(FK_ANVIL, serializer, Anvil, Furniture)

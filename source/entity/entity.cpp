@@ -16,6 +16,12 @@ Entity::Entity(Serializer &serializer)
   serializer.loadFromFile(&removed);
 }
 
+void Entity::initAfterLoad(Game &game)
+{
+  if (hasInventory())
+    getInventory()->initAfterLoad(game);
+}
+
 void Entity::remove()
 {
   removed = true;
@@ -119,6 +125,12 @@ bool Entity::move2(Level &level, int xa, int ya)
 bool Entity::interact(Player &player, Item &item, int attackDir)
 {
   return item.interact(player, *this, attackDir);
+}
+
+bool Entity::recieveUUID(UUID_OwnedField &uuid)
+{
+  this->uuid = uuid;
+  return true;
 }
 
 void Entity::serialize(Serializer &serializer)

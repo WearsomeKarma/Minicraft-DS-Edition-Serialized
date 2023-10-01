@@ -22,7 +22,7 @@ public:
   FactoryUUID_Stack();
   FactoryUUID_Stack(Serializer &serializer);
 
-  void assignUUID(ISerializeable_WithUUID &target) override;
+  void assignUUID(IOwnsUUID &target) override;
 
   void serialize(Serializer &serializer) override;
 };

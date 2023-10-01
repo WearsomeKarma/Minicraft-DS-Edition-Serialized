@@ -37,3 +37,6 @@
 #define END_DESERIALIZATION__AS(baseType) \
     } \
     return std::static_pointer_cast< baseType >( result );
+
+#define RETURN_FROM_DESERIALIZATION__AS(baseType) \
+    return std::static_pointer_cast< baseType >( result );

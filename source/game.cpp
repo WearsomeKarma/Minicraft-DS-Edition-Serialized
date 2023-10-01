@@ -132,15 +132,29 @@ void Game::resetGame()
   hasWon = false;
 }
 
-std::shared_ptr<Entity> Game::getByUUID(UUID_Field &uuid)
+bool Game::tryGetValue_ByUUID(
+        I_UUID_Field &uuid, std::shared_ptr<Entity> &value)
 {
-  if (!uuid.getIsActive())
-    return nullptr;
   for(auto &level : levels)
   {
-    std::shared_ptr<Entity> e = level.getByUUID(uuid);
-    if (e != nullptr)
-      return e;
+    if (level.tryGetValue_ByUUID(uuid, value))
+      return true;
   }
-  return nullptr;
+  return false;
+}
+
+bool Game::tryGetValue_ByUUID(
+        I_UUID_Field &uuid, std::weak_ptr<Entity> &value)
+{
+  for(auto &level : levels)
+  {
+    if (level.tryGetValue_ByUUID(uuid, value))
+      return true;
+  }
+  return false;
+}
+
+void Game::assignUUID(IOwnsUUID &uuidOwner)
+{
+  factoryUUID.assignUUID(uuidOwner);
 }

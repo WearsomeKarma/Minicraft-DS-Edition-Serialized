@@ -22,11 +22,11 @@ public:
   int col, sprite;
   std::string name;
 
-  Furniture(enum FurnitureKind furnitureKind) 
-      : Entity(EK_FURNITURE), furnitureKind(furnitureKind) {}
   Furniture(Serializer &serializer);
   Furniture(enum FurnitureKind furnitureKind, std::string name);
   Furniture(Furniture &f);
+
+  virtual ~Furniture() {}
 
   void tick(Game &game, Level &level, std::shared_ptr<Entity> self) override;
 

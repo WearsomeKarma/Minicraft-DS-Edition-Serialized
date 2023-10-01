@@ -2,9 +2,11 @@
 #include "entity.h"
 
 Particle::Particle(Serializer &serializer) 
-: Entity(EK_PARTICLE)
+: Entity(serializer)
 {
-  serializer.loadFromFile_Fields(&time, &duration);
+  serializer.loadFromFile(&particleKind);
+  serializer.loadFromFile(&time);
+  serializer.loadFromFile(&duration);
 }
 
 void Particle::tick(Game &game, Level &level, std::shared_ptr<Entity> self)
@@ -18,5 +20,8 @@ void Particle::tick(Game &game, Level &level, std::shared_ptr<Entity> self)
 
 void Particle::serialize(Serializer &serializer) 
 {
-  serializer.saveToFile_Fields(&time, &duration);
+  Entity::serialize(serializer);
+  serializer.saveToFile(&particleKind);
+  serializer.saveToFile(&time);
+  serializer.saveToFile(&duration);
 }

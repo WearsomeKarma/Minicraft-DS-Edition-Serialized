@@ -16,59 +16,77 @@
 #include "../exception.h"
 
 Level::Level(Serializer &serializer)
+    : game(&serializer.game)
 {
-  printf("\x1b[1;0HLEVEL factoryUUID            ");
-  factoryUUID = FactoryUUID_Stack(serializer);
-  if (serializer.hasError())
-    Exception::raise();
   printf("\x1b[1;0HLEVEL fields            ");
   serializer.loadFromFile(&random);
   if (serializer.hasError())
+  {
+    printf("\x1b[5;0Hfields-error %d           ", serializer.getError());
     Exception::raise();
+  }
   serializer.loadFromFile(&depth);
   if (serializer.hasError())
+  {
+    printf("\x1b[5;0Hfields-error %d           ", serializer.getError());
     Exception::raise();
+  }
   serializer.loadFromFile_Fields(&w, &monsterDensity);
   if (serializer.hasError())
+  {
+    printf("\x1b[5;0Hfields-error %d           ", serializer.getError());
     Exception::raise();
+  }
+  entitiesInTiles.resize(w * h);
   printf("\x1b[1;0HLEVEL map            ");
   map = std::make_shared<std::vector<unsigned char>>();
-  if (serializer.hasError())
-    Exception::raise();
   serializer.loadFromFile_Collection
       <std::vector<unsigned char>, unsigned char>(*map);
   if (serializer.hasError())
+  {
+    printf("\x1b[5;0Hmap-error %d           ", serializer.getError());
     Exception::raise();
+  }
   printf("\x1b[1;0HLEVEL tiles            ");
   serializer.loadFromFile_Collection
       <std::vector<unsigned char>, unsigned char>(tiles);
   if (serializer.hasError())
+  {
+    printf("\x1b[5;0Htiles-error %d           ", serializer.getError());
     Exception::raise();
+  }
   printf("\x1b[1;0HLEVEL data            ");
   serializer.loadFromFile_Collection
       <std::vector<unsigned char>, unsigned char>(data);
   if (serializer.hasError())
+  {
+    printf("\x1b[5;0Hdata-error %d           ", serializer.getError());
     Exception::raise();
+  }
   printf("\x1b[1;0HLEVEL entities            ");
-  if (serializer.hasError())
-    Exception::raise();
   size_t length;
   serializer.loadFromFile(&length);
   if (serializer.hasError())
+  {
+    printf("\x1b[5;0Hentity-length-error %d           ", serializer.getError());
     Exception::raise();
+  }
   for(size_t i=0;i<length;i++)
   {
-    entities.push_back(EntityDeserializer::deserialize(serializer));
+    add(EntityDeserializer::deserialize(serializer));
     if (serializer.hasError())
+    {
+      printf("\x1b[5;0Hentity-error %d           ", serializer.getError());
       Exception::raise();
+    }
   }
   // serializer.loadFromFile_Collection_Shared_Serialized
   //     <std::vector<std::shared_ptr<Entity>>, Entity>
   //     (entities);
 }
 
-Level::Level(int w, int h, char depth, Level &parentLevel)
-    : Level(w, h, depth)
+Level::Level(Game &game, int w, int h, char depth, Level &parentLevel)
+    : Level(game, w, h, depth)
 {
   for (int y = 0; y < h; y++)
     for (int x = 0; x < w; x++)
@@ -103,7 +121,8 @@ Level::Level(int w, int h, char depth, Level &parentLevel)
     }
 }
 
-Level::Level(int w, int h, char depth)
+Level::Level(Game &game, int w, int h, char depth)
+    : game(&game)
 {
   if (depth < 0)
   {
@@ -148,6 +167,12 @@ Level::Level(int w, int h, char depth)
     aw->y = h * 8;
     add(aw);
   }
+}
+
+void Level::initAfterLoad(Game &game)
+{
+  for(auto &e : entities)
+    e->initAfterLoad(game);
 }
 
 void Level::tick(Game &game)
@@ -424,9 +449,20 @@ void Level::setData(int x, int y, int val)
 
 void Level::add(std::shared_ptr<Entity> entity)
 {
+  if (!entity)
+  {
+    printf("\x1b[5;0HNULL entity added            ");
+    Exception::raise();
+    return;
+  }
   if (auto playerEntity = std::dynamic_pointer_cast<Player>(entity))
   {
     player = playerEntity;
+  }
+  // If the entity doesn't already have a UUID, give it one.
+  if (!entity->getUUID().getID())
+  {
+    game->assignUUID(*entity);
   }
   entity->removed = false;
   entities.push_back(entity);
@@ -436,6 +472,10 @@ void Level::add(std::shared_ptr<Entity> entity)
 
 void Level::remove(std::shared_ptr<Entity> e)
 {
+  // Don't worry about manually removing UUID
+  // since it's handled by the UUID destructor.
+  // This allows for FurnitureItem to own a
+  // Furniture, and have it keep its assigned UUID.
   for (size_t i = 0; i < entities.size(); i++)
   {
     if (entities[i].get() == e.get())
@@ -530,22 +570,32 @@ std::vector<std::shared_ptr<Entity>> Level::getEntities(int x0, int y0, int x1, 
   return result;
 }
 
-std::shared_ptr<Entity> Level::getByUUID(UUID_Field &uuid)
+bool Level::tryGetValue_ByUUID(
+        I_UUID_Field &uuid, std::shared_ptr<Entity> &value) 
 {
-  if (!uuid.getIsActive())
-    return nullptr;
+  unsigned int id = uuid.getID();
   for(auto &e : entities)
   {
-    if (((const Entity&)*e).getUUID().getID() == uuid.getID())
-      return e;
+    if (e->getUUID().getID() == id)
+    {
+      value = e;
+      return true;
+    }
   }
-  return nullptr;
+  return false;
+}
+
+bool Level::tryGetValue_ByUUID(
+        I_UUID_Field &uuid, std::weak_ptr<Entity> &value) 
+{
+  std::shared_ptr<Entity> entity;
+  bool result = tryGetValue_ByUUID(uuid, entity);
+  value = std::weak_ptr<Entity>(entity);
+  return result;
 }
 
 void Level::serialize(Serializer &serializer) 
 {
-  printf("\x1b[1;0HLEVEL factoryUUID            ");
-  factoryUUID.serialize(serializer);
   printf("\x1b[1;0HLEVEL fields            ");
   serializer.saveToFile(&random);
   serializer.saveToFile(&depth);

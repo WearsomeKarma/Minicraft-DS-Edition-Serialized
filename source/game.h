@@ -6,7 +6,9 @@
 #include "gfx/glscreen.h"
 #include "gfx/softwarescreen.h"
 #include "gfx/lightmask.h"
+#include "serialization/AssignerUUID.h"
 #include "serialization/ContainerUUID.h"
+#include "serialization/FactoryUUID_Stack.h"
 #include "serialization/serializable.h"
 
 #include <memory>
@@ -14,7 +16,10 @@
 class Menu;
 class Entity;
 
-class Game : public IContainerUUID<std::shared_ptr<Entity>>
+class Game : 
+    public IContainerUUID<std::shared_ptr<Entity>>,
+    public IContainerUUID<std::weak_ptr<Entity>>,
+    public IAssignerUUID
 {
 public:
   static const std::string NAME;
@@ -39,6 +44,14 @@ public:
   void win();
   void resetGame();
 
+  bool tryGetValue_ByUUID(I_UUID_Field &uuid, std::shared_ptr<Entity> &value) override;
+  bool tryGetValue_ByUUID(I_UUID_Field &uuid, std::weak_ptr<Entity> &value) override;
+
+  void assignUUID(IOwnsUUID &target) override;
+
+private:
+  friend class UUID;
+  FactoryUUID_Stack factoryUUID;
 private:
   LightMask lightMask;
   static const int SCALE = 3;
@@ -49,6 +62,4 @@ private:
   int wonTimer = 0;
   bool hasWon = false;
   void init();
-
-  std::shared_ptr<Entity> getByUUID(UUID_Field &uuid) override;
 };

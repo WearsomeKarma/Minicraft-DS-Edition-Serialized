@@ -12,7 +12,7 @@ class PauseMenu : public Menu
 
   void save(Game &game);
 public:
-  PauseMenu();
+  PauseMenu(Game &game);
 
   void tick(Game &game) override;
   void render(Screen &screen, Screen &bottomScreen) override;

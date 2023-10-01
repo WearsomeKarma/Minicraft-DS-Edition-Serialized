@@ -3,10 +3,11 @@
 #include "../item/inventory.h"
 
 ItemEntity::ItemEntity(Serializer &serializer)
-: Entity(EK_ITEM)
+: Entity(serializer)
 {
     serializer.loadFromFile_Fields(&lifeTime, &hurtTime);
     serializer.loadFromFile_Fields(&xa, &zz);
+    serializer.loadFromFile_Shared_Serialized(inventory);
 }
 
 ItemEntity::ItemEntity(std::shared_ptr<Item> item, int x, int y)
@@ -94,8 +95,8 @@ void ItemEntity::touchedBy(Level &level, Entity &entity)
 
 void ItemEntity::serialize(Serializer &serializer)
 {
+  Entity::serialize(serializer);
   serializer.saveToFile_Fields(&lifeTime, &hurtTime);
   serializer.saveToFile_Fields(&xa, &zz);
-  //TODO: replace shared_ptr with inventory and then
-  //      work with that.
+  inventory->serialize(serializer);
 }
