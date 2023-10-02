@@ -112,10 +112,9 @@ void LoadMenu::tick(Game &game)
     currentStepName = "Done!";
     break;
   case 6:
+    serializer.close();
     game.frameSkipEnabled = true;
     game.setMenu(std::make_unique<InGameMenu>(game.player, game.levels[game.currentLevel].map));
-
-    serializer.close();
     break;
   }
 

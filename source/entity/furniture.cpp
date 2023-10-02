@@ -1,4 +1,5 @@
 #include "furniture.h"
+#include "../exception.h"
 
 #include <memory>
 #include "entity.h"
@@ -9,24 +10,23 @@
 Furniture::Furniture(Serializer &serializer)
 : Entity(serializer)
 {
-  printf("\x1b[4;0HUTIL-item-deser 1A           "); \
+  printf("\x1b[4;0HUTIL-item-deser 1A           ");
   serializer.loadFromFile(&furnitureKind);
-  printf("\x1b[4;0HUTIL-item-deser 1C           "); \
+  printf("\x1b[4;0HUTIL-item-deser 1C           ");
   serializer.loadFromFile(&col);
-  printf("\x1b[4;0HUTIL-item-deser 1D           "); \
+  printf("\x1b[4;0HUTIL-item-deser 1D           ");
   serializer.loadFromFile(&sprite);
-  printf("\x1b[4;0HUTIL-item-deser 1E           "); \
+  printf("\x1b[4;0HUTIL-item-deser 1E           ");
 
   size_t length;
   serializer.loadFromFile(&length);
-  if (length == 0) return;
-  printf("\x1b[4;0HUTIL-item-deser 1F %ld          ", serializer.getPositionInFile()); \
+  printf("\x1b[4;0HUTIL-item-deser 1F %ld %ld         ", length, serializer.getPositionInFile());
   char char_name[length];
-  serializer.loadFromFile_Fields(&char_name[0], &char_name[length-1]);
-  printf("\x1b[4;0HUTIL-item-deser 1G           "); \
+  serializer.loadFromFile_Fields(&char_name[0], &char_name[length]);
+  printf("\x1b[4;0HUTIL-item-deser 1G           ");
 
   name.assign(&char_name[0], length);
-  printf("\x1b[4;0HUTIL-item-deser 1H           "); \
+  printf("\x1b[4;0HUTIL-item-deser 1H           ");
 }
 
 Furniture::Furniture(enum FurnitureKind furnitureKind, std::string name)
@@ -113,8 +113,7 @@ void Furniture::serialize(Serializer &serializer)
 
   size_t length = name.length();
   serializer.saveToFile(&length);
-  if (length == 0) return;
-  char char_name[length];
+  const char *char_name = name.c_str();
 
-  serializer.saveToFile_Fields(&char_name[0], &char_name[length-1]);
+  serializer.saveToFile_Fields(&char_name[0], &char_name[length]);
 }

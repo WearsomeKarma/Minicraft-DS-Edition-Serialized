@@ -26,7 +26,8 @@ FurnitureItem::FurnitureItem(std::shared_ptr<Furniture> furniture)
 void FurnitureItem::initAfterLoad(Game &game)
 {
   //TODO: ifndef NDEBUG exception should be raised when return value is false.
-  furniture.trySetActive(game);  
+  if (placed)
+    furniture.trySetActive(game);  
 }
 
 std::string FurnitureItem::getName() const

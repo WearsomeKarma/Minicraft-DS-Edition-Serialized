@@ -1,5 +1,6 @@
 #include <nds.h>
 #include <nds/arm9/background.h>
+#include <filesystem.h>
 #include <fat.h>
 #include <gl2d.h>
 #include "game.h"
@@ -96,12 +97,16 @@ void initialize()
   initializeMainEngine();
   initializeSubEngine();
   initializeResources();
-  fatInitDefault();
   Exception::init();
-
-    //TODO: remove console
+  
+  //   //TODO: remove console
   videoSetModeSub(MODE_0_2D);
   consoleDemoInit();
+  if (!nitroFSInit(NULL))
+  {
+    if (!fatInitDefault())
+      Exception::raise();
+  }
 }
 
 void incrementTime()

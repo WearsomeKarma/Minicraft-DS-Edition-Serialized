@@ -28,7 +28,7 @@ ASSETS    := res
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
-CFLAGS := -Wall -O1 -g\
+CFLAGS := -Wall -O2\
     -march=armv5te -mtune=arm946e-s -fomit-frame-pointer\
     -ffast-math
 
@@ -40,7 +40,7 @@ LDFLAGS  = -specs=ds_arm9.specs -Wl,-Map,$(notdir $*.map)
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project (order is important)
 #---------------------------------------------------------------------------------
-LIBS := -lfat -lmm9 -lnds9
+LIBS := -lmm9 -lfilesystem -lfat -lnds9
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
