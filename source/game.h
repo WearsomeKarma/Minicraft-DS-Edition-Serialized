@@ -28,7 +28,7 @@ public:
   std::shared_ptr<Player> player;
   std::unique_ptr<Menu> menu;
   std::vector<Level> levels;
-  int currentLevel = 3;
+  int currentLevel = 1;
   bool frameSkipEnabled = true;
 
   Game();

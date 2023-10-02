@@ -2,6 +2,16 @@
 
 #include <string>
 
+enum ToolItemKind
+{
+  TIK_UNKNOWN,
+  TIK_Shovel,
+  TIK_Hoe,
+  TIK_Sword,
+  TIK_Pickaxe,
+  TIK_Axe,
+};
+
 class ToolDetails
 {
 public:
@@ -13,7 +23,10 @@ public:
 
   const std::string name;
   const int sprite;
+  const enum ToolItemKind toolItemKind;
 
 private:
-  ToolDetails(std::string name, int sprite) : name(name), sprite(sprite) {}
+  ToolDetails(std::string name, int sprite, enum ToolItemKind toolItemKind) 
+      : name(name), sprite(sprite), toolItemKind(toolItemKind) 
+  {}
 };

@@ -125,6 +125,7 @@ void Game::resetGame()
 {
   levels.clear();
   player = NULL;
+  currentLevel = 1;
   playerDeadTime = 0;
   pendingLevelChange = 0;
   wonTimer = 0;

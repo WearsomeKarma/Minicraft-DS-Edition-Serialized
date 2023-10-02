@@ -20,7 +20,6 @@ void LoadMenu::tick(Game &game)
   {
   case -1:
       currentStepName = "Error. Press A or B.";
-      printf("\x1b[0;0HERROR %d %ld         ", serializer.getError(), serializer.getPositionInFile());
       if (game.justTapped(KEY_A) || game.justTapped(KEY_B))
       {
         close(game);
@@ -30,7 +29,7 @@ void LoadMenu::tick(Game &game)
     game.frameSkipEnabled = false;
     game.levels.clear();
 
-    serializer.loadFromFile_EmplaceBack_Serialized<Level>(game.levels);
+    serializer.loadFromFile_EmplaceBegin_Serialized<Level>(game.levels);
     if (serializer.hasError())
     {
       currentStep = -1;
@@ -45,7 +44,7 @@ void LoadMenu::tick(Game &game)
     currentStepName = "Loading Overworld";
     break;
   case 1:
-    serializer.loadFromFile_EmplaceBack_Serialized<Level>(game.levels);
+    serializer.loadFromFile_EmplaceBegin_Serialized<Level>(game.levels);
     if (serializer.hasError())
     {
       currentStep = -1;
@@ -60,7 +59,7 @@ void LoadMenu::tick(Game &game)
     currentStepName = "Loading Underground 1";
     break;
   case 2:
-    serializer.loadFromFile_EmplaceBack_Serialized<Level>(game.levels);
+    serializer.loadFromFile_EmplaceBegin_Serialized<Level>(game.levels);
     if (serializer.hasError())
     {
       currentStep = -1;
@@ -75,7 +74,7 @@ void LoadMenu::tick(Game &game)
     currentStepName = "Loading Underground 2";
     break;
   case 3:
-    serializer.loadFromFile_EmplaceBack_Serialized<Level>(game.levels);
+    serializer.loadFromFile_EmplaceBegin_Serialized<Level>(game.levels);
     if (serializer.hasError())
     {
       currentStep = -1;
@@ -90,7 +89,7 @@ void LoadMenu::tick(Game &game)
     currentStepName = "Loading Underground 3";
     break;
   case 4:
-    serializer.loadFromFile_EmplaceBack_Serialized<Level>(game.levels);
+    serializer.loadFromFile_EmplaceBegin_Serialized<Level>(game.levels);
     if (serializer.hasError())
     {
       currentStep = -1;

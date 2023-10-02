@@ -4,15 +4,6 @@
 #include "tooldetails.h"
 #include "../shim/random.h"
 
-enum ToolItemKind
-{
-  TIK_Shovel,
-  TIK_Hoe,
-  TIK_Sword,
-  TIK_Pickaxe,
-  TIK_Axe,
-};
-
 class ToolItem : public Item
 {
 private:

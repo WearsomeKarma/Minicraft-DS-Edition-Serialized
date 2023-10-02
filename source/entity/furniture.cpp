@@ -10,23 +10,16 @@
 Furniture::Furniture(Serializer &serializer)
 : Entity(serializer)
 {
-  printf("\x1b[4;0HUTIL-item-deser 1A           ");
   serializer.loadFromFile(&furnitureKind);
-  printf("\x1b[4;0HUTIL-item-deser 1C           ");
   serializer.loadFromFile(&col);
-  printf("\x1b[4;0HUTIL-item-deser 1D           ");
   serializer.loadFromFile(&sprite);
-  printf("\x1b[4;0HUTIL-item-deser 1E           ");
 
   size_t length;
   serializer.loadFromFile(&length);
-  printf("\x1b[4;0HUTIL-item-deser 1F %ld %ld         ", length, serializer.getPositionInFile());
   char char_name[length];
   serializer.loadFromFile_Fields(&char_name[0], &char_name[length]);
-  printf("\x1b[4;0HUTIL-item-deser 1G           ");
 
   name.assign(&char_name[0], length);
-  printf("\x1b[4;0HUTIL-item-deser 1H           ");
 }
 
 Furniture::Furniture(enum FurnitureKind furnitureKind, std::string name)

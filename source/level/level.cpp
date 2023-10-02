@@ -18,57 +18,45 @@
 Level::Level(Serializer &serializer)
     : game(&serializer.game)
 {
-  printf("\x1b[1;0HLEVEL fields            ");
   serializer.loadFromFile(&random);
   if (serializer.hasError())
   {
-    printf("\x1b[5;0Hfields-error %d           ", serializer.getError());
     Exception::raise();
   }
   serializer.loadFromFile(&depth);
   if (serializer.hasError())
   {
-    printf("\x1b[5;0Hfields-error %d           ", serializer.getError());
     Exception::raise();
   }
   serializer.loadFromFile_Fields(&w, &monsterDensity);
   if (serializer.hasError())
   {
-    printf("\x1b[5;0Hfields-error %d           ", serializer.getError());
     Exception::raise();
   }
   entitiesInTiles.resize(w * h);
-  printf("\x1b[1;0HLEVEL map            ");
   map = std::make_shared<std::vector<unsigned char>>();
   serializer.loadFromFile_Collection
       <std::vector<unsigned char>, unsigned char>(*map);
   if (serializer.hasError())
   {
-    printf("\x1b[5;0Hmap-error %d           ", serializer.getError());
     Exception::raise();
   }
-  printf("\x1b[1;0HLEVEL tiles            ");
   serializer.loadFromFile_Collection
       <std::vector<unsigned char>, unsigned char>(tiles);
   if (serializer.hasError())
   {
-    printf("\x1b[5;0Htiles-error %d           ", serializer.getError());
     Exception::raise();
   }
-  printf("\x1b[1;0HLEVEL data            ");
   serializer.loadFromFile_Collection
       <std::vector<unsigned char>, unsigned char>(data);
   if (serializer.hasError())
   {
-    printf("\x1b[5;0Hdata-error %d           ", serializer.getError());
     Exception::raise();
   }
-  printf("\x1b[1;0HLEVEL entities            ");
   size_t length;
   serializer.loadFromFile(&length);
   if (serializer.hasError())
   {
-    printf("\x1b[5;0Hentity-length-error %d           ", serializer.getError());
     Exception::raise();
   }
   for(size_t i=0;i<length;i++)
@@ -76,7 +64,6 @@ Level::Level(Serializer &serializer)
     add(EntityDeserializer::deserialize(serializer));
     if (serializer.hasError())
     {
-      printf("\x1b[5;0Hentity-error %d           ", serializer.getError());
       Exception::raise();
     }
   }
@@ -451,7 +438,6 @@ void Level::add(std::shared_ptr<Entity> entity)
 {
   if (!entity)
   {
-    printf("\x1b[5;0HNULL entity added            ");
     Exception::raise();
     return;
   }
@@ -596,20 +582,15 @@ bool Level::tryGetValue_ByUUID(
 
 void Level::serialize(Serializer &serializer) 
 {
-  printf("\x1b[1;0HLEVEL fields            ");
   serializer.saveToFile(&random);
   serializer.saveToFile(&depth);
   serializer.saveToFile_Fields(&w, &monsterDensity);
-  printf("\x1b[1;0HLEVEL map            ");
   serializer.saveToFile_Collection
       <std::vector<unsigned char>, unsigned char>(*map);
-  printf("\x1b[1;0HLEVEL tiles            ");
   serializer.saveToFile_Collection
       <std::vector<unsigned char>, unsigned char>(tiles);
-  printf("\x1b[1;0HLEVEL data            ");
   serializer.saveToFile_Collection
       <std::vector<unsigned char>, unsigned char>(data);
-  printf("\x1b[1;0HLEVEL entities            ");
   serializer.saveToFile_Collection_Shared_Serialized
       <std::vector<std::shared_ptr<Entity>>, Entity>(entities);
 }

@@ -36,7 +36,6 @@ public:
 
   bool openRead(const std::string &path) 
   {
-    printf("\x1b[10;0HOPEN %s            ", path.c_str());
     if (file)
     {
       errorKind = EK_DOUBLE_OPEN;
@@ -53,7 +52,6 @@ public:
 
   bool openWrite(const std::string &path) 
   {
-    printf("\x1b[10;0HOPEN %s            ", path.c_str());
     if (file)
     {
       errorKind = EK_DOUBLE_OPEN;
@@ -70,7 +68,6 @@ public:
 
   bool close()
   {
-    printf("\x1b[10;0HCLOSE %08lx          ", ftell(file));
     if(!file)
     {
       errorKind = EK_DOUBLE_CLOSE;
@@ -95,7 +92,6 @@ public:
   template<typename TPtr>
   bool loadFromFile(TPtr *ptr)
   {
-    printf("\x1b[10;0HLOAD %08lx            ", ftell(file));
     if (!ptr)
     {
       errorKind = EK_MEMORY;
@@ -158,6 +154,15 @@ public:
   bool loadFromFile_EmplaceBack_Serialized(TContainer &container)
   {
     container.emplace_back(*this);
+    if (errorKind == EK_NO_ERROR)
+      return true;
+    container.erase(container.end());
+    return false;
+  }
+  template<typename TPtr, typename TContainer>
+  bool loadFromFile_EmplaceBegin_Serialized(TContainer &container)
+  {
+    container.emplace(container.begin(), *this);
     if (errorKind == EK_NO_ERROR)
       return true;
     container.erase(container.end());
@@ -248,7 +253,6 @@ public:
     }
     for (size_t i=0;i<length;i++)
     {
-      // printf("\x1b[11;0HCOLLECTION %ld            ", i);
       collection.push_back(std::shared_ptr<TValue>(buffer[i]));
     }
     return true;
@@ -264,8 +268,6 @@ public:
       return false;
     for (size_t i=0;i<length;i++)
     {
-      printf("\x1b[11;0HCOLLECTION %ld / %ld           ", i, length);
-      printf("\x1b[1;0HLOAD-collection-ser       ");
       collection.emplace_back(*this);
       if (errorKind != EK_NO_ERROR)
         return false;
@@ -280,8 +282,6 @@ public:
       return false;
     for (size_t i=0;i<length;i++)
     {
-      printf("\x1b[11;0HCOLLECTION %ld / %ld           ", i, length);
-      printf("\x1b[1;0HLOAD-collection-shr-ser       ");
       collection.push_back(std::make_shared<TValue>(*this));
       if (errorKind != EK_NO_ERROR)
         return false;
@@ -291,7 +291,6 @@ public:
   template<typename TPtr>
   bool saveToFile(TPtr *ptr)
   {
-    printf("\x1b[10;0HSAVE %ld            ", ftell(file));
     if (!fwrite(ptr, sizeof(TPtr), 1, file))
     {
       errorKind = EK_FAIL_WRITE;
@@ -301,7 +300,6 @@ public:
   }
   bool saveToFile(ISerializeable *ptr)
   {
-    printf("\x1b[10;0HSAVE-SER %ld            ", ftell(file));
     ptr->serialize(*this);
     return errorKind == EK_NO_ERROR;
   }
@@ -338,7 +336,6 @@ public:
     size_t i = 0;
     for (TValue &entry : collection)
     {
-      printf("\x1b[11;0HCOLLECTION %ld            ", i++);
       entry.serialize(*this);
       if (errorKind != EK_NO_ERROR)
         return false;
@@ -355,7 +352,6 @@ public:
     size_t i = 0;
     for (std::shared_ptr<TValue> &entry : collection)
     {
-      printf("\x1b[11;0HCOLLECTION %ld            ", i++);
       if (!saveToFile(entry.get()))
         return false;
     }
@@ -371,7 +367,6 @@ public:
     size_t i = 0;
     for (std::shared_ptr<TValue> &entry : collection)
     {
-      printf("\x1b[11;0HCOLLECTION %ld %08lx           ", i++, ftell(file));
       entry->serialize(*this);
       if (errorKind != EK_NO_ERROR)
         return false;

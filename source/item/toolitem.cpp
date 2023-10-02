@@ -2,6 +2,7 @@
 
 #include "../gfx/color.h"
 #include "item.h"
+#include "tooldetails.h"
 
 ToolItem::ToolItem(Serializer &serializer)
     : Item(serializer)
@@ -10,6 +11,7 @@ ToolItem::ToolItem(Serializer &serializer)
   serializer.loadFromFile(&toolItemKind);
   switch (toolItemKind)
   {
+  case TIK_UNKNOWN: //TODO impl
   case TIK_Axe:
       type = &ToolDetails::axe;
       break;
@@ -44,6 +46,7 @@ ToolItem::ToolItem(ToolDetails *type, int level)
 {
   this->type = type;
   this->level = level;
+  this->toolItemKind = type->toolItemKind;
 }
 
 std::string ToolItem::getName() const

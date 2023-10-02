@@ -100,8 +100,8 @@ void initialize()
   Exception::init();
   
   //   //TODO: remove console
-  videoSetModeSub(MODE_0_2D);
-  consoleDemoInit();
+  // videoSetModeSub(MODE_0_2D);
+  // consoleDemoInit();
   if (!nitroFSInit(NULL))
   {
     if (!fatInitDefault())

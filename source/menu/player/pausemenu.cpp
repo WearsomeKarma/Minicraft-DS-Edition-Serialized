@@ -57,7 +57,6 @@ void PauseMenu::save(Game &game)
   {
     case -1:
       saveStepName = "Saving Failed.";
-      printf("\x1b[0;0HERROR %d          ", serializer.getError());
       if (!serializer.isClosed())
         serializer.close();
       if (!game.justTapped(KEY_A))

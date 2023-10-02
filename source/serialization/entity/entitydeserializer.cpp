@@ -9,7 +9,6 @@
 
 std::shared_ptr<Entity> EntityDeserializer::deserialize(Serializer &serializer)
 {
-  printf("\x1b[1;0HUTIL-ent-deser            ");
   BEGIN_DESERIALIZATION__OF_SERIALIZEABLE(serializer, Entity)
     CASE_DESERIALIZE__WITH(
             EK_UNKNOWN, nullptr)
@@ -22,11 +21,9 @@ std::shared_ptr<Entity> EntityDeserializer::deserialize(Serializer &serializer)
     CASE_DESERIALIZE__WITH(
             EK_ITEM, ItemEntityDeserializer::deserialize(serializer))
   END_DESERIALIZATION
-  // printf("\x1b[1;0HUTIL-ent-deser %d           ", result_lookahead->getKind());
 
   // if (!result->hasInventory())
   //   return result;
-  // printf("\x1b[1;0HUTIL-ent-deser %d inv       ", result_lookahead->getKind());
 
   // std::shared_ptr<Inventory> inventory =
   //     result->getInventory();

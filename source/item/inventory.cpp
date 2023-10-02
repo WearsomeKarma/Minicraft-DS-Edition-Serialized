@@ -9,7 +9,6 @@ Inventory::Inventory(Serializer &serializer)
   serializer.loadFromFile(&length);
   for(size_t i=0;i<length;i++)
   {
-    printf("\x1b[1;0HINV-deser-item %ld         ", length);
     add(ItemDeserializer::deserialize(serializer));
   }
 }
