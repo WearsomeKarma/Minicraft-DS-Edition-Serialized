@@ -32,13 +32,19 @@ Anvil::Anvil()
   yr = 2;
 }
 
+Anvil::Anvil(Game &game)
+    : Anvil()
+{
+  game.assignUUID(*this);
+}
+
 bool Anvil::use(Game &game, Level &level, Player &player, int attackDir)
 {
   game.enterMenu(std::make_unique<CraftingMenu>(anvilRecipes, player));
   return true;
 }
 
-std::shared_ptr<Furniture> Anvil::clone()
+std::shared_ptr<Furniture> Anvil::clone(Game &game)
 {
-  return std::make_shared<Anvil>();
+  return std::make_shared<Anvil>(game);
 }

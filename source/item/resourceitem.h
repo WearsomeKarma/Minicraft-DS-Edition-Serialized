@@ -22,7 +22,7 @@ public:
   void renderInventory(Screen &screen, int x, int y) override;
   bool interactOn(Tile &tile, Level &level, int xt, int yt, Player &player, int attackDir) override;
   bool isDepleted();
-  std::shared_ptr<Item> clone() override;
+  std::shared_ptr<Item> clone(Game &game) override;
 
   void serialize(Serializer &serializer) override;
 };

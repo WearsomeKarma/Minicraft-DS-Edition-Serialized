@@ -38,13 +38,19 @@ Workbench::Workbench() : Furniture(FK_WORKBENCH, "Workbench")
   yr = 2;
 }
 
+Workbench::Workbench(Game &game)
+    : Workbench()
+{
+  game.assignUUID(*this);
+}
+
 bool Workbench::use(Game &game, Level &level, Player &player, int attackDir)
 {
   game.enterMenu(std::make_unique<CraftingMenu>(workbenchRecipes, player));
   return true;
 }
 
-std::shared_ptr<Furniture> Workbench::clone()
+std::shared_ptr<Furniture> Workbench::clone(Game &game)
 {
-  return std::make_shared<Workbench>();
+  return std::make_shared<Workbench>(game);
 }

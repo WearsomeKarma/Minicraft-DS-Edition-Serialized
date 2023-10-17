@@ -88,11 +88,12 @@ void Furniture::touchedBy(Level &level, Entity &entity)
   }
 }
 
-std::shared_ptr<Furniture> Furniture::clone()
+std::shared_ptr<Furniture> Furniture::clone(Game &game)
 {
   auto furniture = std::make_shared<Furniture>(furnitureKind, name);
   furniture->col = col;
   furniture->sprite = sprite;
+  game.assignUUID(*furniture);
 
   return furniture;
 };

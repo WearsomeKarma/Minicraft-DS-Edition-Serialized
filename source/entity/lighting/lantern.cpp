@@ -9,12 +9,18 @@ Lantern::Lantern()
   yr = 2;
 }
 
-int Lantern::getLightRadius()
+Lantern::Lantern(Game &game)
+    : Lantern()
 {
-  return 8;
+  game.assignUUID(*this);
 }
 
-std::shared_ptr<Furniture> Lantern::clone()
+int Lantern::getLightRadius()
 {
-  return std::make_shared<Lantern>();
+  return 12;
+}
+
+std::shared_ptr<Furniture> Lantern::clone(Game &game)
+{
+  return std::make_shared<Lantern>(game);
 }

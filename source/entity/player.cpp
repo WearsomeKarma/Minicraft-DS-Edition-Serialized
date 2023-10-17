@@ -47,7 +47,7 @@ void Player::tick(Game &game, Level &level, std::shared_ptr<Entity> self)
   {
     if (onStairDelay == 0)
     {
-      game.scheduleLevelChange((onTile == Tile::stairsUp) ? 1 : -1);
+      game.scheduleLevelChange((onTile == Tile::stairsUp) ? -1 : 1);
       onStairDelay = 10;
       return;
     }
@@ -130,6 +130,11 @@ void Player::tick(Game &game, Level &level, std::shared_ptr<Entity> self)
 
   if (game.justTapped(KEY_START))
     game.enterMenu(std::make_unique<PauseMenu>(game));
+
+  // if (game.justTapped(KEY_SELECT))
+  // {
+  //   game.scheduleLevelChange(-1);
+  // }
 
   updateInventory(game);
 

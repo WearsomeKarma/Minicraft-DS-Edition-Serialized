@@ -51,7 +51,7 @@ public:
 
   virtual bool matches(const Item &item) { return item.getName() == getName(); }
 
-  virtual std::shared_ptr<Item> clone() { return std::make_shared<Item>(itemKind); }
+  virtual std::shared_ptr<Item> clone(Game &game) { return std::make_shared<Item>(itemKind); }
 
   enum ItemKind getKind() { return itemKind; }
   void serialize(Serializer &serializer) override { serializer.saveToFile(&itemKind); }

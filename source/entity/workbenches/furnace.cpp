@@ -18,13 +18,19 @@ Furnace::Furnace() : Furniture(FK_FURNACE, "Furnace")
   yr = 2;
 }
 
+Furnace::Furnace(Game &game)
+    : Furnace()
+{
+  game.assignUUID(*this);
+}
+
 bool Furnace::use(Game &game, Level &level, Player &player, int attackDir)
 {
   game.enterMenu(std::make_unique<CraftingMenu>(furnaceRecipes, player));
   return true;
 }
 
-std::shared_ptr<Furniture> Furnace::clone()
+std::shared_ptr<Furniture> Furnace::clone(Game &game)
 {
-  return std::make_shared<Furnace>();
+  return std::make_shared<Furnace>(game);
 }

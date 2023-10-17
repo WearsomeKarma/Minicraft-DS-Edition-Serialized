@@ -29,7 +29,7 @@ void LoadMenu::tick(Game &game)
     game.frameSkipEnabled = false;
     game.levels.clear();
 
-    serializer.loadFromFile_EmplaceBegin_Serialized<Level>(game.levels);
+    serializer.loadFromFile_EmplaceBack_Serialized<Level>(game.levels);
     if (serializer.hasError())
     {
       currentStep = -1;
@@ -44,7 +44,7 @@ void LoadMenu::tick(Game &game)
     currentStepName = "Loading Overworld";
     break;
   case 1:
-    serializer.loadFromFile_EmplaceBegin_Serialized<Level>(game.levels);
+    serializer.loadFromFile_EmplaceBack_Serialized<Level>(game.levels);
     if (serializer.hasError())
     {
       currentStep = -1;
@@ -59,7 +59,7 @@ void LoadMenu::tick(Game &game)
     currentStepName = "Loading Underground 1";
     break;
   case 2:
-    serializer.loadFromFile_EmplaceBegin_Serialized<Level>(game.levels);
+    serializer.loadFromFile_EmplaceBack_Serialized<Level>(game.levels);
     if (serializer.hasError())
     {
       currentStep = -1;
@@ -74,7 +74,7 @@ void LoadMenu::tick(Game &game)
     currentStepName = "Loading Underground 2";
     break;
   case 3:
-    serializer.loadFromFile_EmplaceBegin_Serialized<Level>(game.levels);
+    serializer.loadFromFile_EmplaceBack_Serialized<Level>(game.levels);
     if (serializer.hasError())
     {
       currentStep = -1;
@@ -89,7 +89,7 @@ void LoadMenu::tick(Game &game)
     currentStepName = "Loading Underground 3";
     break;
   case 4:
-    serializer.loadFromFile_EmplaceBegin_Serialized<Level>(game.levels);
+    serializer.loadFromFile_EmplaceBack_Serialized<Level>(game.levels);
     if (serializer.hasError())
     {
       currentStep = -1;

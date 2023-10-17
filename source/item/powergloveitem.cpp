@@ -39,7 +39,7 @@ bool PowerGloveItem::interact(Player &player, Entity &entity, int attackDir)
   return false;
 }
 
-std::shared_ptr<Item> PowerGloveItem::clone()
+std::shared_ptr<Item> PowerGloveItem::clone(Game &game)
 {
   return std::make_shared<PowerGloveItem>();
 }

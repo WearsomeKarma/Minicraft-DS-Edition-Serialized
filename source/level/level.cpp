@@ -72,7 +72,7 @@ Level::Level(Serializer &serializer)
   //     (entities);
 }
 
-Level::Level(Game &game, int w, int h, char depth, Level &parentLevel)
+Level::Level(Game &game, int w, int h, signed char depth, Level &parentLevel)
     : Level(game, w, h, depth)
 {
   for (int y = 0; y < h; y++)
@@ -108,7 +108,7 @@ Level::Level(Game &game, int w, int h, char depth, Level &parentLevel)
     }
 }
 
-Level::Level(Game &game, int w, int h, char depth)
+Level::Level(Game &game, int w, int h, signed char depth)
     : game(&game)
 {
   if (depth < 0)
@@ -576,7 +576,8 @@ bool Level::tryGetValue_ByUUID(
 {
   std::shared_ptr<Entity> entity;
   bool result = tryGetValue_ByUUID(uuid, entity);
-  value = std::weak_ptr<Entity>(entity);
+  if (result)
+    value = std::weak_ptr<Entity>(entity);
   return result;
 }
 

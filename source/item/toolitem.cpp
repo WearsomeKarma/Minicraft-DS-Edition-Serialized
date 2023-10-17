@@ -9,6 +9,7 @@ ToolItem::ToolItem(Serializer &serializer)
 {
   serializer.loadFromFile(&random);
   serializer.loadFromFile(&toolItemKind);
+  serializer.loadFromFile(&level);
   switch (toolItemKind)
   {
   case TIK_UNKNOWN: //TODO impl
@@ -106,7 +107,7 @@ bool ToolItem::matches(const Item &item)
   return false;
 }
 
-std::shared_ptr<Item> ToolItem::clone()
+std::shared_ptr<Item> ToolItem::clone(Game &game)
 {
   return std::make_shared<ToolItem>(type, level);
 }
@@ -116,4 +117,5 @@ void ToolItem::serialize(Serializer &serializer)
   Item::serialize(serializer);
   serializer.saveToFile(&random);
   serializer.saveToFile(&toolItemKind);
+  serializer.saveToFile(&level);
 }

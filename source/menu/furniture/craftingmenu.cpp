@@ -60,7 +60,7 @@ void CraftingMenu::tick(Game &game)
 
     if (r->canCraft)
     {
-      r->craft(player);
+      r->craft(game, player);
 
       Sound::craft.play();
 

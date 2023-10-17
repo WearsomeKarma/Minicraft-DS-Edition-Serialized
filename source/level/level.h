@@ -31,7 +31,7 @@ private:
   Game *game;
 
   Random random;
-  char depth;
+  signed char depth;
 
   void updateMap(int x, int y, int viewDistance);
   void sortAndRender(Screen &screen, std::vector<std::shared_ptr<Entity>> list);
@@ -59,8 +59,8 @@ public:
   // -------------------------------
 
   // utilize these
-  Level(Game &game, int w, int h, char depth);
-  Level(Game &game, int w, int h, char depth, Level &parentLevel);
+  Level(Game &game, int w, int h, signed char depth);
+  Level(Game &game, int w, int h, signed char depth, Level &parentLevel);
 
   // For Deserialization - DO NOT USE.
   void initAfterLoad(Game &game);

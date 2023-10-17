@@ -15,7 +15,7 @@ public:
   ValueBy_UUID(UUID_ReferenceField reference_uuid)
     : reference_uuid(reference_uuid) {}
   ValueBy_UUID(TValue value, UUID_ReferenceField reference_uuid)
-    : value(value), reference_uuid(reference_uuid) {}
+    : value(value), reference_uuid(reference_uuid), isActive(true) {}
   ValueBy_UUID(Serializer &serializer)
   {
     reference_uuid = UUID_ReferenceField(serializer);
@@ -38,7 +38,7 @@ public:
   }
   virtual bool trySetActive(IContainerUUID<TValue> &container)
   {
-    isActive = !container.tryGetValue_ByUUID(reference_uuid, this->value);
+    isActive = container.tryGetValue_ByUUID(reference_uuid, this->value);
     return isActive;
   }
   TValue unsafeGet()

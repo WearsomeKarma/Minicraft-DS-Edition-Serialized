@@ -23,7 +23,7 @@ public:
   bool interactOn(Tile &tile, Level &level, int xt, int yt, Player &player, int attackDir) override;
   bool isDepleted() override;
   bool matches(const Item &item) override;
-  std::shared_ptr<Item> clone() override;
+  std::shared_ptr<Item> clone(Game &game) override;
 
   void serialize(Serializer &serializer) override;
 };

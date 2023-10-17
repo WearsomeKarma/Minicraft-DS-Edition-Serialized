@@ -88,9 +88,9 @@ bool FurnitureItem::matches(const Item &item)
   return false;
 }
 
-std::shared_ptr<Item> FurnitureItem::clone()
+std::shared_ptr<Item> FurnitureItem::clone(Game &game)
 {
-  return std::make_shared<FurnitureItem>(furniture.unsafeAsFurniture());
+  return std::make_shared<FurnitureItem>(furniture.unsafeAsFurniture()->clone(game));
 }
 
 void FurnitureItem::serialize(Serializer &serializer) 

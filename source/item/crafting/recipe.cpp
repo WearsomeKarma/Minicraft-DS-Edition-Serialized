@@ -2,6 +2,7 @@
 
 #include "../resourceitem.h"
 #include "../../entity/player.h"
+#include "../furnitureitem.h"
 
 Recipe::Recipe(std::unique_ptr<Item> result, std::vector<ResourceItem> requirements)
     : result(std::move(result)), requirements(requirements) {}
@@ -22,9 +23,9 @@ void Recipe::checkCanCraft(Player &player)
   canCraft = true;
 }
 
-void Recipe::craft(Player &player)
+void Recipe::craft(Game &game, Player &player)
 {
-  player.inventory->add(result->clone());
+  player.inventory->add(result->clone(game));
 
   for (auto &item : requirements)
   {

@@ -17,13 +17,19 @@ Oven::Oven()
   yr = 2;
 }
 
+Oven::Oven(Game &game)
+    : Oven()
+{
+  game.assignUUID(*this);
+}
+
 bool Oven::use(Game &game, Level &level, Player &player, int attackDir)
 {
   game.enterMenu(std::make_unique<CraftingMenu>(ovenRecipes, player));
   return true;
 }
 
-std::shared_ptr<Furniture> Oven::clone()
+std::shared_ptr<Furniture> Oven::clone(Game &game)
 {
-  return std::make_shared<Oven>();
+  return std::make_shared<Oven>(game);
 }

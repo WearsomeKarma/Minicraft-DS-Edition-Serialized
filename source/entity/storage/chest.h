@@ -10,10 +10,11 @@ private:
 
 public:
   Chest();
+  Chest(Game &game);
   Chest(Serializer &serializer);
 
   bool use(Game &game, Level &level, Player &player, int attackDir) override;
-  std::shared_ptr<Furniture> clone() override;
+  std::shared_ptr<Furniture> clone(Game &game) override;
 
   bool hasInventory() override { return true; }
   std::shared_ptr<Inventory> getInventory() override { return inventory; }

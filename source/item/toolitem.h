@@ -26,7 +26,7 @@ public:
   bool canAttack() override;
   int getAttackDamageBonus(Entity &e);
   bool matches(const Item &item) override;
-  std::shared_ptr<Item> clone() override;
+  std::shared_ptr<Item> clone(Game &game) override;
   enum ToolItemKind getKind() { return toolItemKind; }
    
   void serialize(Serializer &serializer) override;

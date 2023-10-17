@@ -33,7 +33,7 @@ public:
   void render(Screen &screen) override;
   bool blocks(Entity &e) override;
   void take(Player &player);
-  virtual std::shared_ptr<Furniture> clone();
+  virtual std::shared_ptr<Furniture> clone(Game &game);
 
   enum FurnitureKind getKind() { return furnitureKind; }
 

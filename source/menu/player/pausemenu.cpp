@@ -1,4 +1,5 @@
 #include "pausemenu.h"
+#include "../main/titlemenu.h"
 
 #include "ingamemenu.h"
 
@@ -47,6 +48,7 @@ void PauseMenu::tick(Game &game)
       isSaving = true;
       break;
     case 2:
+      game.setMenu(std::unique_ptr<TitleMenu>());
       break;
   }
 }
